@@ -15,6 +15,7 @@ import {
   formatSalary,
   formatPostedAt,
   jobDate,
+  sourceGroup,
   type Job,
 } from '@/lib/jobs';
 import { coverLetterHref, stashJob, markJobsReturn } from '@/lib/job-handoff';
@@ -22,7 +23,7 @@ import { track } from '@/lib/analytics';
 import { useSavedJobs, jobKey, type SaveNotice } from '@/lib/useSavedJobs';
 import SaveJobButton from '@/components/jobs/SaveJobButton';
 
-const SOURCES = ['olj', 'remoteok', 'wwr'] as const;
+const SOURCES = ['olj', 'remoteok', 'wwr', 'indeed'] as const;
 
 type SortMode = 'newest' | 'oldest' | 'paid';
 
@@ -94,7 +95,11 @@ export default function Jobs() {
   /** Counts per source, so an empty filter is never a mystery again. */
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: jobs.length };
-    for (const j of jobs) c[j.source] = (c[j.source] ?? 0) + 1;
+    // Counted per filter key, not per raw slug, so the options add up to the
+    // "All sources" total instead of silently losing the alias rows.
+    for (const key of SOURCES) {
+      c[key] = jobs.filter((j) => sourceGroup(key).includes(j.source)).length;
+    }
     return c;
   }, [jobs]);
 
@@ -106,7 +111,8 @@ export default function Jobs() {
         job.title.toLowerCase().includes(q) ||
         (job.company ?? '').toLowerCase().includes(q) ||
         (job.skills ?? []).some((s) => s.toLowerCase().includes(q));
-      const matchesSource = sourceFilter === 'all' || job.source === sourceFilter;
+      const matchesSource =
+        sourceFilter === 'all' || sourceGroup(sourceFilter).includes(job.source);
       const matchesPaid = !paidOnly || Boolean(job.salary_min || job.salary_max);
       return matchesSearch && matchesSource && matchesPaid;
     });

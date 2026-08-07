@@ -1033,7 +1033,8 @@ export default function ProfileForm({
       </div>
 
       {/* Save bar. Sticky rather than fixed so it never covers the footer. */}
-      {editing && (
+      {/* Only show when there are changes, or we're mid-save, or just saved, or error */}
+      {editing && (dirty || state.kind !== "idle") && (
         <div
           className="pointer-events-none sticky z-30 mx-auto mt-6 max-w-6xl px-1"
           // Clears the mobile tab bar; --ally-bottomnav is 0px wherever it is absent.
@@ -1054,10 +1055,8 @@ export default function ProfileForm({
                 : state.kind === "saving"
                   ? "Saving…"
                   : state.kind === "saved"
-                    ? "Saved."
-                    : dirty
-                      ? "Unsaved changes."
-                      : "Everything is saved."}
+                    ? "Saved!"
+                    : ""}
             </p>
             <div className="flex gap-2">
               <button

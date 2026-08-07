@@ -143,12 +143,23 @@ async function run() {
   const srcOpts = await sourceSel.locator('option').allTextContents();
   check(
     '/jobs source lists all, OLJ, RemoteOK and We Work Remotely',
-    srcOpts.length === 4 &&
-      /All sources/.test(srcOpts[0]) &&
+    /All sources/.test(srcOpts[0]) &&
       /OnlineJobs\.ph/.test(srcOpts[1]) &&
       /RemoteOK/.test(srcOpts[2]) &&
       /We Work Remotely/.test(srcOpts[3]),
     srcOpts.join(' | '),
+  );
+
+  // The counts printed in the options must add up to the "All sources" total,
+  // or listings exist that no filter can reach (which is how the legacy
+  // `onlinejobs` slug hid 2.5k rows).
+  const nums = srcOpts.map((o) => Number((o.match(/\((\d[\d,]*)\)/) ?? [])[1]?.replace(/,/g, '') ?? 0));
+  const [total, ...parts] = nums;
+  const summed = parts.reduce((a, b) => a + b, 0);
+  check(
+    '/jobs source counts account for every listing',
+    summed === total,
+    `${parts.join(' + ')} = ${summed} vs all ${total}`,
   );
   check(
     '/jobs source dropdown has no Upwork option',

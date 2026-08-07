@@ -36,11 +36,36 @@ export const SOURCE_META: Record<string, { label: string; short: string; bg: str
   olj: { label: 'OnlineJobs.ph', short: 'OLJ', bg: '#eef2ff', fg: '#4453b8' },
   remoteok: { label: 'RemoteOK', short: 'RemoteOK', bg: '#fdf0e8', fg: '#b5581f' },
   wwr: { label: 'We Work Remotely', short: 'WWR', bg: '#e9f6ec', fg: '#2f7a45' },
+  // Legacy slug: the OnlineJobs.ph scraper wrote `onlinejobs` before it wrote
+  // `olj`, and 2.5k of those rows are still live. Same board, same badge.
+  onlinejobs: { label: 'OnlineJobs.ph', short: 'OLJ', bg: '#eef2ff', fg: '#4453b8' },
+  // The Indeed scraper was removed for being broken, but its rows are still
+  // on the board until they age out, so they need a label rather than a slug.
+  indeed: { label: 'Indeed', short: 'Indeed', bg: '#f1efec', fg: '#4a4845' },
   // Upwork is no longer scraped (the API application was rejected) and is gone
   // from the board's filter. The meta stays so any row still in the table from
   // the old sync renders a real label instead of the raw slug.
   upwork: { label: 'Upwork', short: 'Upwork', bg: '#eef2ff', fg: '#4453b8' },
 };
+
+/**
+ * Slugs that mean the same board.
+ *
+ * Filtering has to match on the group, not the raw column, or picking
+ * "OnlineJobs.ph" hides the 2.5k rows written under the older `onlinejobs`
+ * slug and the board looks like it lost most of its listings.
+ */
+export const SOURCE_ALIASES: Record<string, readonly string[]> = {
+  olj: ['olj', 'onlinejobs'],
+  remoteok: ['remoteok'],
+  wwr: ['wwr'],
+  indeed: ['indeed'],
+};
+
+/** Every raw `source` value that should show under the given filter key. */
+export function sourceGroup(key: string): readonly string[] {
+  return SOURCE_ALIASES[key] ?? [key];
+}
 
 export function sourceMeta(source: string) {
   return (
