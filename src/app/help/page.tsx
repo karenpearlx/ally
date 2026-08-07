@@ -9,7 +9,7 @@ import { CONTACT_EMAIL, CONTACT_IS_PLACEHOLDER } from "@/lib/contact";
 export const metadata: Metadata = {
   title: "Help",
   description:
-    "Versified help: answers to the common questions, fixes for the things that go wrong, and step-by-step guides for the tracker, the builders and installing the app.",
+    "Verse help: answers to the common questions, fixes for the things that go wrong, and step-by-step guides for the tracker, the builders and installing the app.",
 };
 
 /**
@@ -29,10 +29,10 @@ type Entry = { q: string; a: string[] };
 
 const FAQ: Entry[] = [
   {
-    q: "Is Versified free?",
+    q: "Is Verse free?",
     a: [
       "The job board, unlimited application tracking, the rate check and the free course tracks cost nothing, with no trial timer and no card.",
-      "Pro is ₱199 a month and unlocks the three advanced course tracks plus higher limits on the resume and cover letter builders. Versified never takes a cut of your pay and is not an agency, so there is no placement fee either way.",
+      "Pro is ₱199 a month and unlocks the three advanced course tracks plus higher limits on the resume and cover letter builders. Verse never takes a cut of your pay and is not an agency, so there is no placement fee either way.",
     ],
   },
   {
@@ -55,9 +55,9 @@ const FAQ: Entry[] = [
     ],
   },
   {
-    q: "Will an employer know I used Versified?",
+    q: "Will an employer know I used Verse?",
     a: [
-      "No. Nothing is stamped on your letter or resume, and Versified never contacts an employer on your behalf or shares your profile with recruiters.",
+      "No. Nothing is stamped on your letter or resume, and Verse never contacts an employer on your behalf or shares your profile with recruiters.",
     ],
   },
   {
@@ -94,10 +94,10 @@ const FIXES: Fix[] = [
   {
     symptom: "Where did Upwork go?",
     cause:
-      "Upwork turned down the API access Versified applied for, so there is no sanctioned way to sync their listings. Rather than leave a filter that could only ever be empty, it was removed.",
+      "Upwork turned down the API access Verse applied for, so there is no sanctioned way to sync their listings. Rather than leave a filter that could only ever be empty, it was removed.",
     steps: [
       "We Work Remotely took its place in the source dropdown and posts a lot of the same remote roles.",
-      "Upwork is still worth checking directly. Versified just cannot mirror it.",
+      "Upwork is still worth checking directly. Verse just cannot mirror it.",
     ],
   },
   {
@@ -133,7 +133,7 @@ const FIXES: Fix[] = [
     cause: "Usually the browser blocking the file, or the free limit reached.",
     steps: [
       "Check for a blocked-download notice at the top or bottom of the browser.",
-      "In the in-app browser inside Facebook or Messenger, downloads often fail silently — open Versified in Chrome or Safari instead.",
+      "In the in-app browser inside Facebook or Messenger, downloads often fail silently — open Verse in Chrome or Safari instead.",
       "If you are at the free limit, Profile then Plans and pricing shows how many you have left.",
     ],
   },
@@ -177,7 +177,7 @@ const GUIDES: Guide[] = [
   },
   {
     n: "04",
-    title: "Install Versified on your phone",
+    title: "Install Verse on your phone",
     time: "1 minute",
     steps: [
       "Android: open vrsfd.com in Chrome, tap the three dots, then Add to home screen.",
@@ -458,7 +458,7 @@ export default function HelpPage() {
                   is worse than not offering one. */}
               {!CONTACT_IS_PLACEHOLDER && (
                 <a
-                  href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Versified help")}`}
+                  href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Verse help")}`}
                   className="btn btn-primary"
                 >
                   Email support

@@ -13,7 +13,7 @@ export default function ResetPasswordPage() {
         points: [
           'A longer passphrase is easier to remember and harder to guess',
           'Never share a reset link, even with someone claiming to be support',
-          'Versified will never ask you to send your password by email',
+          'Verse will never ask you to send your password by email',
         ],
       }}
       footer={

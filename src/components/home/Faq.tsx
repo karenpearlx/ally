@@ -16,30 +16,30 @@ type Item = { q: string; a: string[] };
 
 const FAQ: Item[] = [
   {
-    q: "Is Versified really free?",
+    q: "Is Verse really free?",
     a: [
       "Yes. Every part of it — the job feed, unlimited application tracking, the rate calculator, the resume and cover letter builders, all the courses. No trial timer, no card, no locked tier waiting at the bottom of the page.",
-      "Versified does not take a cut of your pay and is not an agency, so there is no placement fee either. You apply on the original site and the client pays you directly.",
+      "Verse does not take a cut of your pay and is not an agency, so there is no placement fee either. You apply on the original site and the client pays you directly.",
     ],
   },
   {
     q: "What job sites do you pull from?",
     a: [
       "OnlineJobs.ph, RemoteOK and We Work Remotely, refreshed through the day and deduped so the same role does not show up three times.",
-      "Every listing links straight back to the original post. Versified never sits between you and the client.",
+      "Every listing links straight back to the original post. Verse never sits between you and the client.",
     ],
   },
   {
     q: "How is this different from other job trackers?",
     a: [
       "Most job trackers are built for the general job market — local roles, corporate jobs, broad platforms — and many charge once you hit a certain number of applications.",
-      "Versified is only for Filipino VAs chasing remote clients. That focus is the whole point: the sources are VA boards, the rate calculator is in pesos against real client budgets, the courses are about landing your first client, and tracking stays unlimited and free.",
+      "Verse is only for Filipino VAs chasing remote clients. That focus is the whole point: the sources are VA boards, the rate calculator is in pesos against real client budgets, the courses are about landing your first client, and tracking stays unlimited and free.",
     ],
   },
   {
     q: "Can I use it on my phone?",
     a: [
-      "It is built mobile-first, and you can install it to your home screen like a normal app — open Versified in your browser and tap Add to Home Screen. Pages you have already opened still load when your data drops out.",
+      "It is built mobile-first, and you can install it to your home screen like a normal app — open Verse in your browser and tap Add to Home Screen. Pages you have already opened still load when your data drops out.",
     ],
   },
   {

@@ -19,7 +19,7 @@ import { hasPaidAccess, readSubscription } from "@/lib/subscription";
 import DeepCourseIndex from "@/components/deep/DeepCourseIndex";
 
 export const metadata = {
-  title: "Courses — Versified",
+  title: "Courses — Verse",
   description:
     "Nine written VA tracks with worked examples, exercises, rate benchmarks and a glossary, plus premium niche tracks for every specialism on the job board.",
 };

@@ -34,7 +34,7 @@ export default function AnalyticsSection() {
       <SectionTitle
         index="01 / Analytics"
         title="What people actually do"
-        sub="Traffic, referrals and on-page behaviour for Versified. Everything here is read straight from the events table; nothing is sampled or estimated."
+        sub="Traffic, referrals and on-page behaviour for Verse. Everything here is read straight from the events table; nothing is sampled or estimated."
       />
 
       <div className="flex flex-wrap items-center gap-2">

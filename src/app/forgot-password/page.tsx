@@ -7,11 +7,11 @@ export default function ForgotPasswordPage() {
     <AuthShell
       eyebrow="Account recovery"
       title="Reset your password"
-      sub="Enter the email you used for Versified. We'll send you a secure reset link."
+      sub="Enter the email you used for Verse. We'll send you a secure reset link."
       aside={{
         heading: 'A quick security note',
         points: [
-          "We won't reveal whether an email has an Versified account",
+          "We won't reveal whether an email has an Verse account",
           'Reset links expire and can only be used to update your own account',
           'You can request another link if the first one expires',
         ],

@@ -11,7 +11,7 @@ import { readUserSettings } from '@/lib/settings';
 import { readSubscription } from '@/lib/subscription';
 
 export const metadata: Metadata = {
-  title: 'Settings · Versified',
+  title: 'Settings · Verse',
   description: 'Follow-up reminders, default templates and notifications.',
   robots: { index: false, follow: false },
 };
@@ -47,7 +47,7 @@ export default async function SettingsPage({
         <div className="mx-auto max-w-5xl">
           <p className="eyebrow">Settings</p>
           <h1 className="display-lg mt-4">
-            How Versified behaves for you<span className="dot">.</span>
+            How Verse behaves for you<span className="dot">.</span>
           </h1>
           <p className="lede mt-5 max-w-xl">
 Saved to your account, not this browser. They follow you to whichever device you

@@ -8,7 +8,7 @@ import GradientBg from "@/components/GradientBg";
 export const metadata: Metadata = {
   title: "Tools",
   description:
-    "The Versified toolkit: rate check, interview prep, resume builder, cover letter builder and the follow-up writer. Free for Filipino VAs.",
+    "The Verse toolkit: rate check, interview prep, resume builder, cover letter builder and the follow-up writer. Free for Filipino VAs.",
 };
 
 /**

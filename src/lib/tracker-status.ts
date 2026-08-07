@@ -7,7 +7,7 @@
  * not: Saved was 3.7:1 and Ghosted 3.1:1 on their own tints.
  *
  * Interviewing is amber rather than teal on purpose. Teal is the brand accent
- * and already means "primary action" everywhere else in Versified, so letting one
+ * and already means "primary action" everywhere else in Verse, so letting one
  * status borrow it made Interviewing read as a button.
  */
 

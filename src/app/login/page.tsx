@@ -7,7 +7,7 @@ export default function Login() {
   return (
     <AuthShell
       eyebrow="Welcome back"
-      title="Sign in to Versified"
+      title="Sign in to Verse"
       sub="Pick up where you left off."
       aside={{
         heading: "What's waiting for you",

@@ -29,14 +29,14 @@ export async function generateMetadata({ params }: Params) {
   if (deep) {
     const card = COURSES_INDEX.cards.find((c) => c.slug === slug);
     return {
-      title: `${deep.title} — Versified`,
+      title: `${deep.title} — Verse`,
       description: card?.blurb,
     };
   }
   const course = courseBySlug(slug);
-  if (!course) return { title: "Course not found — Versified" };
+  if (!course) return { title: "Course not found — Verse" };
   return {
-    title: `${course.title} — Versified`,
+    title: `${course.title} — Verse`,
     description: course.blurb,
   };
 }

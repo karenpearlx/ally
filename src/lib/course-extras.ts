@@ -1894,7 +1894,7 @@ export const EXTRAS: Record<string, CourseExtras> = {
     practiceProject: {
       title: "Build a 50-name list and write the sequence",
       brief:
-        "Pick a real product you would be happy to sell — even Versified itself. Build a genuinely tight list of fifty, then write the three touches. Hiring managers in this niche will ask to see exactly this.",
+        "Pick a real product you would be happy to sell — even Verse itself. Build a genuinely tight list of fifty, then write the three touches. Hiring managers in this niche will ask to see exactly this.",
       steps: [
         "Write the ICP in one sentence with three queryable filters and two triggers.",
         "Build the list to fifty names, verified, spot-checked by hand on ten.",

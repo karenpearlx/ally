@@ -13,7 +13,7 @@ export default function Wordmark({
   return (
     <Link
       href={href}
-      aria-label="Versified — home"
+      aria-label="Verse — home"
       className={`font-display inline-flex items-baseline text-accent max-md:min-h-[44px] ${className}`}
       style={{
         fontWeight: 800,
@@ -21,7 +21,7 @@ export default function Wordmark({
         fontSize: size === "sm" ? "1.25rem" : "1.5rem",
       }}
     >
-      versified<span className="text-ink">.</span>
+      verse<span className="text-ink">.</span>
     </Link>
   );
 }

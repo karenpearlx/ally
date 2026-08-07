@@ -1,7 +1,7 @@
 import { createClient as createPublicClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 
-// Use Versified's single browser client so RLS can grant paid accounts the 24-hour
+// Use Verse's single browser client so RLS can grant paid accounts the 24-hour
 // early-access window without a second auth client racing the session refresh.
 //
 // Created lazily: this module is also imported by the server-rendered homepage

@@ -129,7 +129,7 @@ export default function PWA() {
   if (updateReady) {
     return (
       <Bar
-        text="A new version of Versified is ready."
+        text="A new version of Verse is ready."
         actionLabel="Refresh"
         onAction={() => updateReady.waiting?.postMessage('SKIP_WAITING')}
         onClose={() => setUpdateReady(null)}
@@ -141,7 +141,7 @@ export default function PWA() {
 
   return (
     <Bar
-      text="Install Versified on your phone for one-tap access."
+      text="Install Verse on your phone for one-tap access."
       actionLabel="Install"
       onAction={install}
       onClose={dismiss}

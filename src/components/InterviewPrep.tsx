@@ -795,7 +795,7 @@ export default function InterviewPrep() {
                   )}
                   <p className="mt-2.5 text-[0.8125rem] leading-relaxed" style={{ color: '#6b6863' }}>
                     The key stays in this browser and is sent straight to {provider === 'openai' ? 'OpenAI' : 'Anthropic'}{' '}
-                    for each request. Versified never stores it, and never stores your answers on a server. It is the same
+                    for each request. Verse never stores it, and never stores your answers on a server. It is the same
                     key the{' '}
                     <Link href="/cover-letter" className="tap link-draw font-semibold" style={{ color: 'var(--color-accent-deep)' }}>
                       cover letter builder

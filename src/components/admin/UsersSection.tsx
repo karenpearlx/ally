@@ -76,7 +76,7 @@ export default function UsersSection() {
     <div className="ad-fade space-y-5">
       <SectionTitle
         index="03 / People"
-        title="Who is using Versified"
+        title="Who is using Verse"
         sub="Signups, activity, and what each account has saved. A dash means the table behind that number does not exist yet, which is different from a zero."
       />
 

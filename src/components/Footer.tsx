@@ -81,7 +81,7 @@ export default function Footer({ tagline = "Free to start. No agency in the midd
         </div>
 
         <p className="mt-10 text-sm" style={{ color: "var(--color-faint)" }}>
-          © {new Date().getFullYear()} Versified
+          © {new Date().getFullYear()} Verse
         </p>
       </div>
     </footer>

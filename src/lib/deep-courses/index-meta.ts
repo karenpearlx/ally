@@ -1,4 +1,4 @@
-// Generated from the Versified deep-course index. Do not edit by hand.
+// Generated from the Verse deep-course index. Do not edit by hand.
 export type DeepCourseCard = {
   slug: string; kicker: string; badge: string; title: string;
   blurb: string; bullets: string[]; duration: string;

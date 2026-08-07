@@ -9,8 +9,8 @@ import { createClient } from '@/lib/supabase/server';
 import { hasPaidAccess, readSubscription } from '@/lib/subscription';
 
 export const metadata = {
-  title: 'Follow-up email writer — Versified',
-  description: 'Write the follow-up that gets answered instead of ignored. Included with Versified Pro.',
+  title: 'Follow-up email writer — Verse',
+  description: 'Write the follow-up that gets answered instead of ignored. Included with Verse Pro.',
   robots: { index: true, follow: true },
 };
 

@@ -8,19 +8,19 @@ import GradientBg from "@/components/GradientBg";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Why Versified exists: one place for Filipino VAs to find work, learn the job, and know what to charge. Free, no agency in the middle.",
+    "Why Verse exists: one place for Filipino VAs to find work, learn the job, and know what to charge. Free, no agency in the middle.",
 };
 
 const PRINCIPLES = [
   {
     kicker: "01",
     title: "Free, and staying that way",
-    body: "No placement fee, no cut of your pay, no ₱15,000 course at the end of a funnel. If Versified ever needs money to run, it will come from somewhere that is not your salary.",
+    body: "No placement fee, no cut of your pay, no ₱15,000 course at the end of a funnel. If Verse ever needs money to run, it will come from somewhere that is not your salary.",
   },
   {
     kicker: "02",
     title: "No agency in the middle",
-    body: "You apply directly to the employer, on their site, with your own name on it. Versified never sits between you and a client and never sells your details to a recruiter.",
+    body: "You apply directly to the employer, on their site, with your own name on it. Verse never sits between you and a client and never sells your details to a recruiter.",
   },
   {
     kicker: "03",
@@ -56,7 +56,7 @@ export default function About() {
             Built for the VAs, not the agencies<span className="dot">.</span>
           </h1>
           <p className="lede mt-5 max-w-xl">
-            Versified started with a familiar evening: eleven browser tabs open, the same cover
+            Verse started with a familiar evening: eleven browser tabs open, the same cover
             letter pasted for the ninth time, and no honest answer to the question &ldquo;so
             what&rsquo;s your rate?&rdquo;
           </p>

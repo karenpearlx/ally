@@ -45,14 +45,14 @@ export async function requireAdmin() {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
   if (error || !data.user) throw new ApiError(401, 'Sign in to continue.');
-  if (!isAdminEmail(data.user.email)) throw new ApiError(403, 'This account is not an Versified admin.');
+  if (!isAdminEmail(data.user.email)) throw new ApiError(403, 'This account is not an Verse admin.');
   const { data: admin, error: adminError } = await supabase
     .from('admin_users')
     .select('role')
     .eq('user_id', data.user.id)
     .in('role', ['admin', 'superadmin'])
     .maybeSingle();
-  if (adminError || !admin) throw new ApiError(403, 'This account is not an Versified admin.');
+  if (adminError || !admin) throw new ApiError(403, 'This account is not an Verse admin.');
   return {
     supabase,
     user: data.user,

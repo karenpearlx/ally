@@ -653,7 +653,7 @@ export default function ProfileForm({
         )}
 
         <p className="mt-4 text-[0.75rem] leading-relaxed" style={{ color: "#6b6863" }}>
-          Resume text is sent to your selected AI provider for this import. Versified does not save the file or your API key.
+          Resume text is sent to your selected AI provider for this import. Verse does not save the file or your API key.
         </p>
       </section>
 

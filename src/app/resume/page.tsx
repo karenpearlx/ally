@@ -163,7 +163,7 @@ export default function Resume() {
       window.print();
     } catch {
       setExportError({
-        text: 'Could not reach Versified, so the export was not counted. Try again.',
+        text: 'Could not reach Verse, so the export was not counted. Try again.',
         href: '/pricing',
         label: 'See Pro',
       });

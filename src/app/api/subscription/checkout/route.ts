@@ -21,7 +21,7 @@ export async function POST(request: Request) {
         data: {
           attributes: {
             line_items: [{
-              name: 'Versified Pro, one month',
+              name: 'Verse Pro, one month',
               description: 'Unlimited career tools, premium courses, and early job access for 30 days.',
               amount: PRO_PRICE_CENTAVOS,
               currency: 'PHP',
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
             cancel_url: `${origin}/pricing?checkout=cancelled`,
             customer_email: user.email,
             billing: { email: user.email, name: user.user_metadata?.full_name || user.email.split('@')[0] },
-            description: 'Versified Pro monthly access',
+            description: 'Verse Pro monthly access',
             reference_number: reference,
             send_email_receipt: true,
             show_description: true,

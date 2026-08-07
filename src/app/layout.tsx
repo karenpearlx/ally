@@ -23,14 +23,14 @@ const body = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://vrsfd.com"),
-  title: "Versified — Every VA opportunity. One place.",
+  title: "Verse — Every VA opportunity. One place.",
   description:
     "Learn the work, price it properly, and find real remote jobs. Built for Filipino virtual assistants.",
-  applicationName: "Versified",
+  applicationName: "Verse",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: "Versified",
+    title: "Verse",
     // "default" keeps the iOS status bar legible on our light paper background.
     // "black-translucent" would slide content under the clock.
     statusBarStyle: "default",
@@ -43,10 +43,10 @@ export const metadata: Metadata = {
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
   openGraph: {
-    title: "Versified — Every VA opportunity. One place.",
+    title: "Verse — Every VA opportunity. One place.",
     description:
       "Learn the work, price it properly, and find real remote jobs. Built for Filipino virtual assistants.",
-    siteName: "Versified",
+    siteName: "Verse",
     type: "website",
   },
   formatDetection: { telephone: false },

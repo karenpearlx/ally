@@ -4,7 +4,7 @@
  * TODO(karen): this is still a placeholder — hello@ally.ph does not exist, so a
  * privacy or data-deletion request sent there goes nowhere. Set
  * NEXT_PUBLIC_CONTACT_EMAIL in .env.local to a mailbox you actually read (your
- * own address, or hello@ whatever domain you buy) before Versified is public.
+ * own address, or hello@ whatever domain you buy) before Verse is public.
  */
 export const PLACEHOLDER_CONTACT = 'hello@ally.ph';
 

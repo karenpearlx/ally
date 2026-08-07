@@ -180,7 +180,7 @@ export async function POST(request: Request) {
   try {
     const { supabase, user } = await requireActiveUser();
     const account = await readSubscription(supabase, user.id);
-    if (!hasPaidAccess(account)) throw new ApiError(403, 'AI interview prep is included with Versified Pro.');
+    if (!hasPaidAccess(account)) throw new ApiError(403, 'AI interview prep is included with Verse Pro.');
     const body = await readJson(request);
     const provider = providerField(body.provider);
     const apiKey = stringField(body.api_key, 'api_key', { required: true, max: 500 })!;

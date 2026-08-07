@@ -147,7 +147,7 @@ export default function SettingsSection({
           </p>
         </div>
         <Note>
-          <strong>On IP addresses:</strong> Versified never stores the raw address. Exclusions use a keyed one-way hash,
+          <strong>On IP addresses:</strong> Verse never stores the raw address. Exclusions use a keyed one-way hash,
           and visitor history uses a separate random browser identifier that is hashed before it reaches the database.
           Event tracking does not collect form values, emails, or phone numbers.
         </Note>

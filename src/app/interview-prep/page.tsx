@@ -10,9 +10,9 @@ import { createClient } from '@/lib/supabase/server';
 import { hasPaidAccess, readSubscription } from '@/lib/subscription';
 
 export const metadata = {
-  title: 'Interview prep — Versified',
+  title: 'Interview prep — Verse',
   description:
-    'Practise real remote interview questions, out loud, and get written feedback on your answer. Included with Versified Pro.',
+    'Practise real remote interview questions, out loud, and get written feedback on your answer. Included with Verse Pro.',
 };
 
 /** The tool is gated on the session, so this page can never be cached. */
@@ -74,7 +74,7 @@ export default async function InterviewPrepPage() {
             >
               Pro
             </span>
-            <span>{paid ? 'Included in your plan' : 'Included with Versified Pro'}</span>
+            <span>{paid ? 'Included in your plan' : 'Included with Verse Pro'}</span>
             <span>Your answers never leave your device</span>
           </div>
         </div>

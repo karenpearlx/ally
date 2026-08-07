@@ -106,7 +106,7 @@ export default async function Home() {
           </Reveal>
           <Reveal delay={120}>
             <p className="mt-8 text-center text-sm md:text-base" style={{ color: "var(--color-muted)" }}>
-              Free. No agency, no placement fee. Just Versified.
+              Free. No agency, no placement fee. Just Verse.
             </p>
           </Reveal>
         </div>
@@ -155,7 +155,7 @@ export default async function Home() {
           <SectionHead
             eyebrow="Rate check"
             title="Stop guessing what to charge"
-            sub="Pick your skills and your years. Versified reads what real clients are paying right now and hands you a number you can defend."
+            sub="Pick your skills and your years. Verse reads what real clients are paying right now and hands you a number you can defend."
           />
           <Reveal delay={100} className="mt-14 md:mt-20">
             <PhoneMock />
@@ -169,7 +169,7 @@ export default async function Home() {
           <SectionHead
             eyebrow="Live job board"
             title="Every listing, side by side"
-            sub="One search across three platforms, deduped and sorted. Tap through to apply on the original site — Versified never sits between you and the client."
+            sub="One search across three platforms, deduped and sorted. Tap through to apply on the original site — Verse never sits between you and the client."
           />
           <Reveal delay={100} className="mt-14 md:mt-24">
             <FloatCards tracked={trackedLabel} />
@@ -183,7 +183,7 @@ export default async function Home() {
           <SectionHead
             eyebrow="Included when you sign up"
             title="The boring parts, handled"
-            sub="Applying is mostly admin. Versified does the admin so the only thing left is deciding which jobs are worth your evening."
+            sub="Applying is mostly admin. Verse does the admin so the only thing left is deciding which jobs are worth your evening."
           />
 
           <Reveal delay={100} className="mt-14 md:mt-20">
@@ -246,7 +246,7 @@ export default async function Home() {
           <SectionHead
             eyebrow="What VAs say"
             title="Coming from real people"
-            sub="Versified launched recently. This section fills up with actual users, or it stays empty."
+            sub="Verse launched recently. This section fills up with actual users, or it stays empty."
           />
           <div className="mt-14 md:mt-20">
             <Testimonials />

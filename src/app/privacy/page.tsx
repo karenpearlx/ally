@@ -10,7 +10,7 @@ const UPDATED = "4 August 2026";
 export const metadata: Metadata = {
   title: "Privacy",
   description:
-    "What Versified collects, why, and what we never do with it. Plain language first, details after.",
+    "What Verse collects, why, and what we never do with it. Plain language first, details after.",
 };
 
 const SECTIONS: LegalSection[] = [
@@ -32,7 +32,7 @@ const SECTIONS: LegalSection[] = [
     id: "analytics",
     title: "Usage analytics",
     paragraphs: [
-      "We count page views, clicks, searches, and filters so we can tell which parts of Versified are worth keeping. Each visit gets a random session id and a one-way hashed visitor id. Your raw IP address is never stored.",
+      "We count page views, clicks, searches, and filters so we can tell which parts of Verse are worth keeping. Each visit gets a random session id and a one-way hashed visitor id. Your raw IP address is never stored.",
       "There are no advertising pixels, no third-party trackers, and nothing following you to other sites.",
     ],
   },
@@ -40,7 +40,7 @@ const SECTIONS: LegalSection[] = [
     id: "cookies",
     title: "Cookies",
     paragraphs: [
-      "Versified sets a session cookie so you stay signed in, and stores a little data in your browser so drafts survive a refresh. That is the whole list. No ad cookies, no cross-site tracking.",
+      "Verse sets a session cookie so you stay signed in, and stores a little data in your browser so drafts survive a refresh. That is the whole list. No ad cookies, no cross-site tracking.",
       "Blocking cookies will sign you out and break saving, but you can still browse the job board.",
     ],
   },
@@ -70,8 +70,8 @@ const SECTIONS: LegalSection[] = [
     id: "job-listings",
     title: "Job listings and applying",
     paragraphs: [
-      "Listings are collected from public job boards, currently OnlineJobs.ph and RemoteOK. Versified does not submit applications for you. When you tap through to apply, you leave Versified and whatever you send is covered by that site's privacy policy and the employer's, not ours.",
-      "Your tracker entries stay private to your account. Employers cannot browse Versified users.",
+      "Listings are collected from public job boards, currently OnlineJobs.ph and RemoteOK. Verse does not submit applications for you. When you tap through to apply, you leave Verse and whatever you send is covered by that site's privacy policy and the employer's, not ours.",
+      "Your tracker entries stay private to your account. Employers cannot browse Verse users.",
     ],
   },
   {
@@ -102,14 +102,14 @@ const SECTIONS: LegalSection[] = [
     id: "children",
     title: "Age",
     paragraphs: [
-      "Versified is built for adults looking for work. It is not intended for anyone under 18, and we do not knowingly collect data from minors. If we learn we have, we delete it.",
+      "Verse is built for adults looking for work. It is not intended for anyone under 18, and we do not knowingly collect data from minors. If we learn we have, we delete it.",
     ],
   },
   {
     id: "changes",
     title: "Changes to this policy",
     paragraphs: [
-      "If this policy changes in a way that matters, the date at the top changes and we will say so in the app. Continuing to use Versified after that means the new version applies.",
+      "If this policy changes in a way that matters, the date at the top changes and we will say so in the app. Continuing to use Verse after that means the new version applies.",
     ],
   },
 ];
@@ -122,7 +122,7 @@ export default function Privacy() {
       titleTail=", and why"
       updated={UPDATED}
       summary={[
-        "Versified is free. You are not the product and there is nothing to sell, because we never sell your data.",
+        "Verse is free. You are not the product and there is nothing to sell, because we never sell your data.",
         "We collect what the tools need: your email, your profile, the jobs you track, the documents you make.",
         "Analytics are anonymous. Your raw IP address is never stored and there are no ad trackers.",
         "AI mode sends your job text to OpenAI or Anthropic. Template mode sends it nowhere.",

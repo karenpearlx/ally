@@ -130,7 +130,7 @@ export default function ReviewPrompt({
           Congrats on the offer! 🎉
         </h2>
         <p id="review-prompt-subtitle" className="mt-2.5 text-[0.9375rem] leading-relaxed" style={{ color: 'var(--color-ink-2)' }}>
-          Mind sharing a quick thought about Versified? Your words help other VAs find us.
+          Mind sharing a quick thought about Verse? Your words help other VAs find us.
         </p>
 
         <form onSubmit={submit} className="mt-6">
@@ -145,7 +145,7 @@ export default function ReviewPrompt({
             required
             value={text}
             onChange={(event) => setText(event.target.value)}
-            placeholder="What's been helpful about Versified?"
+            placeholder="What's been helpful about Verse?"
           />
 
           <label htmlFor="review-name" className="mb-1.5 mt-4 block text-sm font-medium">

@@ -10,17 +10,17 @@ const UPDATED = "4 August 2026";
 export const metadata: Metadata = {
   title: "Terms",
   description:
-    "The rules for using Versified. Free to use, no placement fees, and no promises we cannot keep.",
+    "The rules for using Verse. Free to use, no placement fees, and no promises we cannot keep.",
 };
 
 const SECTIONS: LegalSection[] = [
   {
     id: "what-ally-is",
-    title: "What Versified is",
+    title: "What Verse is",
     paragraphs: [
-      "Versified is a free set of tools for Filipino virtual assistants: a job board pulled from public listings, a cover letter and resume builder, an application tracker, a rate checker, and lessons.",
-      "Versified is not an agency, a recruiter, or an employer. We are not a party to anything you agree with a client. We never take a cut of your pay and never charge a placement fee.",
-      "Using Versified means you accept these terms. If you do not, please do not use it.",
+      "Verse is a free set of tools for Filipino virtual assistants: a job board pulled from public listings, a cover letter and resume builder, an application tracker, a rate checker, and lessons.",
+      "Verse is not an agency, a recruiter, or an employer. We are not a party to anything you agree with a client. We never take a cut of your pay and never charge a placement fee.",
+      "Using Verse means you accept these terms. If you do not, please do not use it.",
     ],
   },
   {
@@ -35,7 +35,7 @@ const SECTIONS: LegalSection[] = [
     id: "no-guarantees",
     title: "What we do not promise",
     paragraphs: [
-      "Versified will not get you hired. It makes applying faster and better informed; the rest is you and the market.",
+      "Verse will not get you hired. It makes applying faster and better informed; the rest is you and the market.",
       "We also make no promise about the listings themselves:",
     ],
     bullets: [
@@ -49,7 +49,7 @@ const SECTIONS: LegalSection[] = [
     id: "third-party-listings",
     title: "Listings come from other sites",
     paragraphs: [
-      "Jobs are collected from public boards, currently OnlineJobs.ph and RemoteOK. We do not vet employers, verify companies, or screen for scams, and appearing on Versified is not an endorsement.",
+      "Jobs are collected from public boards, currently OnlineJobs.ph and RemoteOK. We do not vet employers, verify companies, or screen for scams, and appearing on Verse is not an endorsement.",
       "Applying happens on the original site under its rules. Please do your own checking, and remember the oldest rule in remote work: a real employer never asks you to pay for a job, a training kit, or a background check.",
       "If a listing looks fraudulent, email us and we will pull it.",
     ],
@@ -58,7 +58,7 @@ const SECTIONS: LegalSection[] = [
     id: "your-content",
     title: "Your content stays yours",
     paragraphs: [
-      "Your resumes, letters, notes, and profile belong to you. You give us only the permission needed to store them, process them, and show them back to you inside Versified. We do not publish them, sell them, or feed them to recruiters.",
+      "Your resumes, letters, notes, and profile belong to you. You give us only the permission needed to store them, process them, and show them back to you inside Verse. We do not publish them, sell them, or feed them to recruiters.",
       "You are responsible for what you upload: it should be accurate, and it should be yours to use.",
     ],
   },
@@ -73,7 +73,7 @@ const SECTIONS: LegalSection[] = [
   {
     id: "fair-use",
     title: "Fair use",
-    paragraphs: ["Do not use Versified to do any of this:"],
+    paragraphs: ["Do not use Verse to do any of this:"],
     bullets: [
       "Scrape, bulk-download, or resell the job board or lesson content.",
       "Blast identical applications at every listing. It wastes everyone's time, including yours.",
@@ -86,7 +86,7 @@ const SECTIONS: LegalSection[] = [
     id: "availability",
     title: "Availability",
     paragraphs: [
-      "Versified is a small, free project. Features get added, changed, or removed. The site will occasionally be down, and a scraper run will occasionally fail. We do not promise uptime.",
+      "Verse is a small, free project. Features get added, changed, or removed. The site will occasionally be down, and a scraper run will occasionally fail. We do not promise uptime.",
       "We can suspend or close an account that breaks these terms, and we will say why where we reasonably can.",
     ],
   },
@@ -94,15 +94,15 @@ const SECTIONS: LegalSection[] = [
     id: "liability",
     title: "Liability",
     paragraphs: [
-      "Versified is provided as is, with no warranties beyond those the law will not let us disclaim.",
-      "To the fullest extent Philippine law allows, we are not liable for lost work, lost income, bad hires, dodgy clients, missed opportunities, or data loss arising from your use of Versified. Since the service is free, our total liability is limited to what you paid us, which is nothing.",
+      "Verse is provided as is, with no warranties beyond those the law will not let us disclaim.",
+      "To the fullest extent Philippine law allows, we are not liable for lost work, lost income, bad hires, dodgy clients, missed opportunities, or data loss arising from your use of Verse. Since the service is free, our total liability is limited to what you paid us, which is nothing.",
     ],
   },
   {
     id: "ending-it",
     title: "Ending it",
     paragraphs: [
-      "You can stop using Versified whenever you like and ask us to delete your account. We can also discontinue the service; if that happens we will give notice and a way to export your data.",
+      "You can stop using Verse whenever you like and ask us to delete your account. We can also discontinue the service; if that happens we will give notice and a way to export your data.",
     ],
   },
   {
@@ -116,7 +116,7 @@ const SECTIONS: LegalSection[] = [
     id: "changes",
     title: "Changes to these terms",
     paragraphs: [
-      "If these terms change materially, the date at the top changes and we will flag it in the app. Continuing to use Versified after that means you accept the update.",
+      "If these terms change materially, the date at the top changes and we will flag it in the app. Continuing to use Verse after that means you accept the update.",
     ],
   },
 ];
@@ -129,7 +129,7 @@ export default function Terms() {
       titleTail=", in plain words"
       updated={UPDATED}
       summary={[
-        "Versified is free. No placement fees, no cut of your pay, no agency in the middle.",
+        "Verse is free. No placement fees, no cut of your pay, no agency in the middle.",
         "We are not a recruiter. Listings come from other sites and we do not vet employers, so check before you apply.",
         "Nobody can promise you a job, and we are not going to pretend to.",
         "Your resumes, letters, and notes stay yours. Read anything the AI writes before you send it.",

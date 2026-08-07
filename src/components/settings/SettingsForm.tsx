@@ -284,7 +284,7 @@ export default function SettingsForm({ initial }: { initial: Preferences }) {
         <Section
           step="3"
           title="Cover letter niche"
-          blurb="Your usual starting point. Paste a listing and Versified will still suggest a better fit when it spots one."
+          blurb="Your usual starting point. Paste a listing and Verse will still suggest a better fit when it spots one."
         >
           <div className="max-w-md">
             <NichePicker
@@ -301,7 +301,7 @@ export default function SettingsForm({ initial }: { initial: Preferences }) {
         <Section
           step="4"
           title="Cover letter rules"
-          blurb="The parts you'd otherwise retype into every application. These go into every letter Versified writes, template or AI."
+          blurb="The parts you'd otherwise retype into every application. These go into every letter Verse writes, template or AI."
         >
           <CoverLetterRulesFields
             value={draft.coverLetterRules}
@@ -367,7 +367,7 @@ export default function SettingsForm({ initial }: { initial: Preferences }) {
             {state.kind === "error" ? (
               <span style={{ color: "#b5581f" }}>{state.message}</span>
             ) : state.kind === "saved" ? (
-              <span style={{ color: "var(--color-accent-deep)" }}>Saved. Everything updated across Versified.</span>
+              <span style={{ color: "var(--color-accent-deep)" }}>Saved. Everything updated across Verse.</span>
             ) : state.kind === "saving" ? (
               "Saving…"
             ) : dirty ? (

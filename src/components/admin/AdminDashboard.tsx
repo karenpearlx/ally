@@ -54,7 +54,7 @@ export default function AdminDashboard({
         <aside className="ad-railwrap">
           <div>
             <Link href="/" className="font-display text-lg font-extrabold tracking-[-0.02em]">
-              Versified<span className="dot">.</span>
+              Verse<span className="dot">.</span>
             </Link>
             <p className="ad-micro mt-1">Admin console</p>
           </div>

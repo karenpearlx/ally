@@ -85,9 +85,9 @@ export const PLANS: Plan[] = [
 
 const CREATOR_SUBJECT = 'Creator application';
 const CREATOR_BODY = [
-  'Hi Versified team,',
+  'Hi Verse team,',
   '',
-  "I'd like to teach on Versified.",
+  "I'd like to teach on Verse.",
   '',
   'What I do:',
   'What I want to teach:',

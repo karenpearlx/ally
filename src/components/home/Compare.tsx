@@ -1,10 +1,10 @@
 import Reveal from "../Reveal";
 
 /**
- * Old way / with Versified.
+ * Old way / with Verse.
  *
  * Two columns, deliberately unequal in weight: the "old way" panel sits flat on
- * paper-2 with no shadow, the Versified panel is a real raised card. The contrast is
+ * paper-2 with no shadow, the Verse panel is a real raised card. The contrast is
  * carried by elevation and colour, not by shouting.
  *
  * Text colours stay on ink-2/muted rather than faint — faint is 2.6:1 on white
@@ -95,7 +95,7 @@ export default function Compare({ jobs }: { jobs?: string }) {
 
       <Reveal delay={110}>
         <div className="card lift h-full p-7 md:p-9">
-          <p className="eyebrow">With Versified</p>
+          <p className="eyebrow">With Verse</p>
           <h3 className="display-md mt-3">
             One tab, and it remembers
             <span className="dot">.</span>

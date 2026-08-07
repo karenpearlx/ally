@@ -21,7 +21,7 @@ const STEPS = [
   {
     n: "2",
     t: "Track smart",
-    d: "Save anything worth applying to, move it through your pipeline, and let Versified poke you when a client has gone quiet too long.",
+    d: "Save anything worth applying to, move it through your pipeline, and let Verse poke you when a client has gone quiet too long.",
     href: "/tracker",
     cta: "See the tracker",
   },

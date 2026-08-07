@@ -79,7 +79,7 @@ export default function BrowserMock() {
             className="font-display text-sm font-extrabold tracking-tight"
             style={{ color: "var(--color-accent)" }}
           >
-            versified<span style={{ color: "var(--color-ink)" }}>.</span>
+            verse<span style={{ color: "var(--color-ink)" }}>.</span>
           </span>
           <nav className="no-bar flex gap-4 overflow-x-auto text-[0.75rem]">
             {["Jobs", "Rate check", "Learn", "Courses"].map((t, i) => (

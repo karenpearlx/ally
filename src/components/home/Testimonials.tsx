@@ -5,7 +5,7 @@ import PointerCard from "../PointerCard";
 /**
  * Testimonials.
  *
- * DELIBERATELY EMPTY. Versified is new and has no real users to quote yet, and
+ * DELIBERATELY EMPTY. Verse is new and has no real users to quote yet, and
  * inventing quotes on a page that also promises "we never sit between you and
  * the client" would poison the one thing the product is selling. So the section
  * ships with an honest early-days panel instead of placeholder people.
@@ -47,8 +47,8 @@ export default function Testimonials() {
             className="mx-auto mt-3 max-w-md text-[0.9375rem] leading-relaxed"
             style={{ color: "var(--color-ink-2)" }}
           >
-            Versified is new, so this space stays empty until real VAs have used it and told us what they
-            think. If Versified helps you land something, tell us and your words go here — with your name
+            Verse is new, so this space stays empty until real VAs have used it and told us what they
+            think. If Verse helps you land something, tell us and your words go here — with your name
             on them.
           </p>
           <div className="mt-7 flex flex-wrap justify-center gap-3">

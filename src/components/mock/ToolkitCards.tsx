@@ -159,7 +159,7 @@ const TOOLS = [
     href: "/cover-letter",
     cta: "Open the builder",
     title: "Cover letter builder",
-    body: "Paste the listing. Versified reads what they're asking for, pulls the matching bits out of your profile, and writes a short letter that sounds like you — not like a template.",
+    body: "Paste the listing. Verse reads what they're asking for, pulls the matching bits out of your profile, and writes a short letter that sounds like you — not like a template.",
     art: <CoverLetterArt />,
   },
   {

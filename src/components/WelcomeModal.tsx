@@ -309,7 +309,7 @@ export default function WelcomeModal() {
           className="mt-2.5 text-[0.9375rem] leading-relaxed"
           style={{ color: "var(--color-ink-2)" }}
         >
-          Versified helps Filipino VAs find jobs faster and land better rates.
+          Verse helps Filipino VAs find jobs faster and land better rates.
         </p>
 
         <ul className="mt-5 space-y-2.5">
