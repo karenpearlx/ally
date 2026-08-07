@@ -88,6 +88,24 @@ export default function AdminDashboard({
           </div>
         </aside>
 
+        {/* mobile header */}
+        <div className="flex items-center justify-between px-4 py-3 lg:hidden" style={{ borderBottom: '1px solid var(--color-line)' }}>
+          <Link href="/" className="font-display text-lg font-extrabold tracking-[-0.02em]">
+            Verse<span className="dot">.</span>
+          </Link>
+          <Link
+            href="/"
+            className="ad-btn flex items-center gap-1.5"
+            style={{ fontSize: '0.8125rem' }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3.6 10.1 12 3.6l8.4 6.5V19a1.4 1.4 0 0 1-1.4 1.4H5a1.4 1.4 0 0 1-1.4-1.4Z" />
+              <path d="M9.4 20.4v-6.2h5.2v6.2" />
+            </svg>
+            Home
+          </Link>
+        </div>
+
         {/* mobile strip */}
         <div className="ad-strip lg:hidden" role="tablist" aria-label="Admin sections">
           {SECTIONS.map((section) => (
