@@ -96,22 +96,14 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     }
   };
 
-  const google = async () => {
+  const google = () => {
     setError(null);
     setNotice(null);
     setBusy("google");
-    try {
-      const supabase = createClient();
-      const { error: err } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        options: { redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
-      });
-      if (err) throw err;
-      // On success the browser leaves for Google; keep the spinner until it does.
-    } catch (err) {
-      setError(messageFor(err));
-      setBusy(null);
-    }
+    // Server route sets the PKCE code_verifier via Set-Cookie on the redirect
+    // to Google. Client-side signInWithOAuth can lose that cookie before the
+    // browser navigates, which breaks exchangeCodeForSession on return.
+    window.location.assign(`/auth/google?next=${encodeURIComponent(next)}`);
   };
 
   return (
