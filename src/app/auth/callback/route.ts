@@ -1,6 +1,6 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { requestOrigin, safeNextPath } from "@/lib/supabase/origin";
+import { createRouteHandlerClient } from "@/lib/supabase/route";
 
 /**
  * Exchanges the OAuth/PKCE auth code for a session.
@@ -20,26 +20,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL("/login?error=Missing+authentication+code", origin));
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseKey) {
-    return NextResponse.redirect(new URL("/login?error=Auth+is+not+configured", origin));
-  }
-
   const redirect = NextResponse.redirect(new URL(next, origin));
 
-  const supabase = createServerClient(supabaseUrl, supabaseKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
-      },
-      setAll(cookiesToSet) {
-        for (const { name, value, options } of cookiesToSet) {
-          redirect.cookies.set(name, value, options);
-        }
-      },
-    },
-  });
+  let supabase;
+  try {
+    ({ supabase } = createRouteHandlerClient(request, redirect));
+  } catch {
+    return NextResponse.redirect(new URL("/login?error=Auth+is+not+configured", origin));
+  }
 
   const { error } = await supabase.auth.exchangeCodeForSession(
     code,
@@ -47,6 +35,13 @@ export async function GET(request: NextRequest) {
   );
 
   if (error) {
+    // A parallel exchange (e.g. browser detectSessionInUrl) may have already
+    // consumed the one-time code. If we already have a session, treat as success.
+    const { data } = await supabase.auth.getUser();
+    if (data.user) {
+      return redirect;
+    }
+
     const destination = new URL("/login", origin);
     destination.searchParams.set("error", error.message);
     return NextResponse.redirect(destination);

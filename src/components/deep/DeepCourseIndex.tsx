@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { DEEP_COURSE_MAP } from '@/lib/deep-courses';
+import { deepCourseFlags } from '@/lib/deep-courses';
 import { COURSES_INDEX, type DeepCourseCard } from '@/lib/deep-courses/index-meta';
 
 function Tick() {
@@ -46,8 +46,8 @@ function LockIcon() {
 }
 
 function Card({ c, paid }: { c: DeepCourseCard; paid: boolean }) {
-  const course = DEEP_COURSE_MAP[c.slug];
-  const premium = Boolean(course?.premium);
+  const flags = deepCourseFlags(c.slug);
+  const premium = Boolean(flags?.premium);
   const locked = premium && !paid;
 
   return (
@@ -85,7 +85,7 @@ function Card({ c, paid }: { c: DeepCourseCard; paid: boolean }) {
         <div className="relative mt-auto flex items-center justify-between gap-3 pt-5">
           <p className="text-[0.8125rem] text-muted">{c.duration}</p>
           <span className="text-sm font-semibold text-teal-deep">
-            {locked ? `Read ${course?.previewCount ?? 3} free →` : 'Start'}
+            {locked ? `Read ${flags?.previewCount ?? 3} free →` : 'Start'}
           </span>
         </div>
       </div>
@@ -95,7 +95,7 @@ function Card({ c, paid }: { c: DeepCourseCard; paid: boolean }) {
 
 export default function DeepCourseIndex({ paid }: { paid: boolean }) {
   const cards = COURSES_INDEX.cards;
-  const freeCount = cards.filter((c) => !DEEP_COURSE_MAP[c.slug]?.premium).length;
+  const freeCount = cards.filter((c) => !deepCourseFlags(c.slug)?.premium).length;
   const proCount = cards.length - freeCount;
 
   return (

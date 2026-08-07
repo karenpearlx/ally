@@ -1,7 +1,7 @@
 {
   "name": "Verse — every VA job, one place",
   "short_name": "Verse",
-  "description": "Job listings from OnlineJobs.ph, RemoteOK and Upwork, plus a rate checker, resume builder, cover letter builder and application tracker for Filipino virtual assistants.",
+  "description": "Job listings from OnlineJobs.ph, RemoteOK and We Work Remotely, plus a rate checker, resume builder, cover letter builder and application tracker for Filipino virtual assistants.",
   "id": "/",
   "start_url": "/?source=pwa",
   "scope": "/",

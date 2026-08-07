@@ -13,6 +13,7 @@ import {
   type ExperienceLevel,
   type Profile,
 } from '@/lib/profile';
+import { clientIp, enforceRateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 
@@ -235,7 +236,20 @@ async function anthropic(apiKey: string, prompt: string) {
 
 export async function POST(request: Request) {
   try {
-    await requireUser();
+    const { user } = await requireUser();
+    await enforceRateLimit({
+      bucket: 'ai-parse-resume',
+      subject: user.id,
+      limit: 10,
+      windowSeconds: 60 * 60,
+      message: 'Resume parse limit reached. Try again in an hour.',
+    });
+    await enforceRateLimit({
+      bucket: 'ai-parse-resume-ip',
+      subject: clientIp(request),
+      limit: 20,
+      windowSeconds: 60 * 60,
+    });
     const contentLength = Number(request.headers.get('content-length') ?? 0);
     if (Number.isFinite(contentLength) && contentLength > MAX_FILE_BYTES + 512 * 1024) {
       throw new ApiError(413, 'Resume must be under 5MB');

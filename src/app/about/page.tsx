@@ -35,7 +35,7 @@ const PRINCIPLES = [
 ];
 
 const TOOLS = [
-  { href: "/jobs", label: "Job board", note: "Listings from OnlineJobs.ph and RemoteOK in one view, filtered by rate." },
+  { href: "/jobs", label: "Job board", note: "Listings from OnlineJobs.ph, RemoteOK, and We Work Remotely in one view, filtered by rate." },
   { href: "/cover-letter", label: "Cover letter builder", note: "Seventeen niches, your own saved rules, and a draft in under a minute." },
   { href: "/resume", label: "Resume builder", note: "Three clean templates that survive an applicant tracking system." },
   { href: "/tracker", label: "Application tracker", note: "Every application in one place, with follow-up reminders." },

@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import LegalDoc, { type LegalSection } from "@/components/LegalDoc";
 import { CONTACT_EMAIL } from "@/lib/contact";
 
-// TODO: swap for a real inbox once the domain is bought.
-// TODO(karen): still a placeholder unless NEXT_PUBLIC_CONTACT_EMAIL is set. See src/lib/contact.ts.
 const CONTACT = CONTACT_EMAIL;
-const UPDATED = "4 August 2026";
+const UPDATED = "8 August 2026";
 
 export const metadata: Metadata = {
   title: "Terms",
@@ -49,7 +47,7 @@ const SECTIONS: LegalSection[] = [
     id: "third-party-listings",
     title: "Listings come from other sites",
     paragraphs: [
-      "Jobs are collected from public boards, currently OnlineJobs.ph and RemoteOK. We do not vet employers, verify companies, or screen for scams, and appearing on Verse is not an endorsement.",
+      "Jobs are collected from public boards, currently OnlineJobs.ph, RemoteOK, and We Work Remotely. We do not vet employers, verify companies, or screen for scams, and appearing on Verse is not an endorsement.",
       "Applying happens on the original site under its rules. Please do your own checking, and remember the oldest rule in remote work: a real employer never asks you to pay for a job, a training kit, or a background check.",
       "If a listing looks fraudulent, email us and we will pull it.",
     ],

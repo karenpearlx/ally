@@ -1,6 +1,7 @@
 import { ApiError, apiError, readJson, requireActiveUser, stringField } from '@/lib/api';
 import type { Feedback } from '@/lib/interview';
 import { hasPaidAccess, readSubscription } from '@/lib/subscription';
+import { clientIp, enforceRateLimit } from '@/lib/rate-limit';
 
 /**
  * Interview answer feedback.
@@ -181,6 +182,19 @@ export async function POST(request: Request) {
     const { supabase, user } = await requireActiveUser();
     const account = await readSubscription(supabase, user.id);
     if (!hasPaidAccess(account)) throw new ApiError(403, 'AI interview prep is included with Verse Pro.');
+    await enforceRateLimit({
+      bucket: 'ai-interview',
+      subject: user.id,
+      limit: 30,
+      windowSeconds: 60 * 60,
+      message: 'Interview feedback limit reached. Try again in an hour.',
+    });
+    await enforceRateLimit({
+      bucket: 'ai-interview-ip',
+      subject: clientIp(request),
+      limit: 60,
+      windowSeconds: 60 * 60,
+    });
     const body = await readJson(request);
     const provider = providerField(body.provider);
     const apiKey = stringField(body.api_key, 'api_key', { required: true, max: 500 })!;

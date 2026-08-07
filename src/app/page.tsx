@@ -155,7 +155,7 @@ export default async function Home() {
           <SectionHead
             eyebrow="Rate check"
             title="Stop guessing what to charge"
-            sub="Pick your skills and your years. Verse reads what real clients are paying right now and hands you a number you can defend."
+            sub="Pick your skills and your years. Verse estimates a defendable range from collected listing data — not a live quote."
           />
           <Reveal delay={100} className="mt-14 md:mt-20">
             <PhoneMock />

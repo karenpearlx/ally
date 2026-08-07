@@ -2,11 +2,31 @@
 
 import Link from 'next/link';
 import { useCallback, useSyncExternalStore } from 'react';
-import AnalyticsSection from './AnalyticsSection';
-import ContentSection from './ContentSection';
-import ScraperSection from './ScraperSection';
-import SettingsSection from './SettingsSection';
-import UsersSection from './UsersSection';
+import dynamic from 'next/dynamic';
+
+const AnalyticsSection = dynamic(() => import('./AnalyticsSection'), {
+  loading: () => <SectionLoading label="Analytics" />,
+});
+const ContentSection = dynamic(() => import('./ContentSection'), {
+  loading: () => <SectionLoading label="Content" />,
+});
+const ScraperSection = dynamic(() => import('./ScraperSection'), {
+  loading: () => <SectionLoading label="Scraper" />,
+});
+const SettingsSection = dynamic(() => import('./SettingsSection'), {
+  loading: () => <SectionLoading label="Settings" />,
+});
+const UsersSection = dynamic(() => import('./UsersSection'), {
+  loading: () => <SectionLoading label="People" />,
+});
+
+function SectionLoading({ label }: { label: string }) {
+  return (
+    <p className="text-sm" style={{ color: 'var(--color-muted)' }}>
+      Loading {label}…
+    </p>
+  );
+}
 
 const SECTIONS = [
   { id: 'analytics', index: '01', label: 'Analytics' },

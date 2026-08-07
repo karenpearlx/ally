@@ -25,7 +25,7 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Params) {
   const { slug } = await params;
-  const deep = getDeepCourse(slug);
+  const deep = await getDeepCourse(slug);
   if (deep) {
     const card = COURSES_INDEX.cards.find((c) => c.slug === slug);
     return {
@@ -60,7 +60,7 @@ function Head({ eyebrow, title, note }: { eyebrow: string; title: string; note?:
 
 export default async function CoursePage({ params }: Params) {
   const { slug } = await params;
-  const deep = getDeepCourse(slug);
+  const deep = await getDeepCourse(slug);
 
   const supabase = await createClient();
   const {

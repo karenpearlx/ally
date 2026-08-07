@@ -5,7 +5,7 @@ import DeepCourseGlossary from '@/components/deep/DeepCourseGlossary';
 import DeepCourseModules from '@/components/deep/DeepCourseModules';
 import DeepCourseQuiz from '@/components/deep/DeepCourseQuiz';
 import type { DeepCourse, DeepCourseWrapper } from '@/lib/deep-course-types';
-import { DEEP_COURSES } from '@/lib/deep-courses';
+import { premiumDeepCourseCount } from '@/lib/deep-courses';
 
 const PRICE_LABEL = '₱199/mo';
 
@@ -20,7 +20,7 @@ function withWrappers(wrappers: DeepCourseWrapper[] | undefined, children: React
 
 export default function DeepCourseView({ course, paid }: { course: DeepCourse; paid: boolean }) {
   const locked = course.premium && !paid;
-  const premiumTrackCount = DEEP_COURSES.filter((c) => c.premium).length;
+  const premiumTrackCount = premiumDeepCourseCount();
   const modulesChunkIndex = course.chunks.findIndex(
     (chunk) => chunk.kind === 'slot' && chunk.value === 'MODULES',
   );

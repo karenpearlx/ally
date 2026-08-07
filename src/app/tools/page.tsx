@@ -59,7 +59,7 @@ const TOOLS: Tool[] = [
     kicker: "01",
     label: "Rate check",
     blurb:
-      "What clients are actually paying for your kind of work, in pesos and in dollars, by experience level. The number you should have had before the call.",
+      "What clients typically list for your kind of work, in pesos and in dollars, by experience level. Market-range estimates you can check before the call.",
     outcome: "A range you can say out loud",
     tint: "var(--color-teal-wash)",
     ink: "var(--color-teal-deep)",

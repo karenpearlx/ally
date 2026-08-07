@@ -23,7 +23,10 @@ const body = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://vrsfd.com"),
-  title: "Verse — Every VA opportunity. One place.",
+  title: {
+    default: "Verse — Every VA opportunity. One place.",
+    template: "%s · Verse",
+  },
   description:
     "Learn the work, price it properly, and find real remote jobs. Built for Filipino virtual assistants.",
   applicationName: "Verse",
@@ -42,12 +45,22 @@ export const metadata: Metadata = {
     ],
     apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180" }],
   },
+  alternates: { canonical: "/" },
   openGraph: {
     title: "Verse — Every VA opportunity. One place.",
     description:
       "Learn the work, price it properly, and find real remote jobs. Built for Filipino virtual assistants.",
     siteName: "Verse",
     type: "website",
+    url: "https://vrsfd.com",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Verse" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Verse — Every VA opportunity. One place.",
+    description:
+      "Learn the work, price it properly, and find real remote jobs. Built for Filipino virtual assistants.",
+    images: ["/og-image.png"],
   },
   formatDetection: { telephone: false },
 };

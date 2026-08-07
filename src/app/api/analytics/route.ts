@@ -1,20 +1,15 @@
 import { createHmac } from 'node:crypto';
 import { createClient } from '@supabase/supabase-js';
+import { enforceRateLimit } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 const TYPES = new Set(['page_view', 'click', 'search', 'filter', 'scroll', 'job_view']);
-const counters = new Map<string, { count: number; reset: number }>();
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function clientIp(request: Request) {
   return request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || null;
 }
 function digest(value: string, secret: string) { return createHmac('sha256', secret).update(value).digest('hex'); }
-function limited(key: string) {
-  const now = Date.now(); const current = counters.get(key);
-  if (!current || current.reset < now) { counters.set(key, { count: 1, reset: now + 60_000 }); return false; }
-  current.count += 1; return current.count > 90;
-}
 function text(value: unknown, max: number) { return typeof value === 'string' ? value.trim().slice(0, max) || null : null; }
 function safeText(value: unknown, max: number) {
   const clean = text(value, max);
@@ -44,7 +39,17 @@ export async function POST(request: Request) {
   const ip = clientIp(request);
   if (!secret || !ip) return new Response(null, { status: 204 });
   const ipHash = digest(ip, secret);
-  if (limited(ipHash)) return Response.json({ error: 'Too many events.' }, { status: 429 });
+  try {
+    await enforceRateLimit({
+      bucket: 'analytics',
+      subject: ipHash,
+      limit: 90,
+      windowSeconds: 60,
+      message: 'Too many events.',
+    });
+  } catch {
+    return Response.json({ error: 'Too many events.' }, { status: 429 });
+  }
 
   let body: Record<string, unknown>;
   try { body = await request.json(); } catch { return Response.json({ error: 'Invalid JSON.' }, { status: 400 }); }

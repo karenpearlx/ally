@@ -21,10 +21,10 @@ const OLD = [
 function newItems(jobs?: string) {
   return [
     jobs
-      ? `One feed, ${jobs} VA jobs, refreshed every day`
-      : "One feed with every VA job we can find, refreshed every day",
+      ? `One feed, ${jobs} VA jobs, refreshed through the day`
+      : "One feed with every VA job we can find, refreshed through the day",
     "Unlimited applications tracked, with follow-up nudges",
-    "A rate calculator built on what PH clients are actually paying",
+    "A rate calculator with market-range estimates from collected listings",
     "Short structured courses, free, written by working VAs",
   ];
 }

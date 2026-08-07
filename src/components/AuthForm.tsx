@@ -100,9 +100,9 @@ export default function AuthForm({ mode }: { mode: Mode }) {
     setError(null);
     setNotice(null);
     setBusy("google");
-    // Server route sets the PKCE code_verifier via Set-Cookie on the redirect
-    // to Google. Client-side signInWithOAuth can lose that cookie before the
-    // browser navigates, which breaks exchangeCodeForSession on return.
+    // Server route sets the PKCE code_verifier via Set-Cookie, then bounces
+    // through /auth/continue before Google. Client-side signInWithOAuth can
+    // lose that cookie before navigation and break exchangeCodeForSession.
     window.location.assign(`/auth/google?next=${encodeURIComponent(next)}`);
   };
 

@@ -120,8 +120,8 @@ export default function PricingTool() {
             Stop guessing what to charge<span className="dot">.</span>
           </h1>
           <p className="lede mt-5 max-w-xl">
-            Pick what you do and how long you&rsquo;ve done it. You&rsquo;ll get a range you can
-            actually defend in an interview.
+            Pick what you do and how long you&rsquo;ve done it. You&rsquo;ll get a market-range
+            estimate you can defend in an interview — not a live quote from a particular client.
           </p>
         </div>
       </section>

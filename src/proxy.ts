@@ -9,9 +9,10 @@ import { NextResponse, type NextRequest } from 'next/server';
  * perfectly valid session to the login screen. This calls getUser(), which
  * rotates the tokens, and copies any updated cookies onto the response.
  *
- * Intentionally excludes /auth/callback: getUser() on a stale session calls
- * _removeSession(), which deletes PKCE code_verifier cookies before the
- * callback can exchange the OAuth code.
+ * Never match /auth/* here. getUser() on a stale session calls _removeSession(),
+ * which deletes PKCE code_verifier cookies before the callback can exchange
+ * the OAuth code. Login/signup are also excluded — they do not need refresh,
+ * and wiping verifier cookies while a Google sign-in is in flight breaks PKCE.
  */
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
@@ -52,7 +53,5 @@ export const config = {
     '/profile',
     '/dashboard/:path*',
     '/dashboard',
-    '/login',
-    '/signup',
   ],
 };

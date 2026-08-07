@@ -17,7 +17,15 @@ export function createClient() {
 
   browserClient = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      auth: {
+        // OAuth / magic-link codes are exchanged in /auth/callback. Leaving
+        // detectSessionInUrl on would race that route and burn the one-time code
+        // ("invalid flow state, no valid flow state found").
+        detectSessionInUrl: false,
+      },
+    },
   )
 
   return browserClient

@@ -1,5 +1,6 @@
 import { ApiError, apiError, consumeFeatureUse, jsonObject, readJson, requireActiveUser, stringField } from '@/lib/api';
 import { parseRules, rulesPromptBlock } from '@/lib/cover-letter-rules';
+import { clientIp, enforceRateLimit } from '@/lib/rate-limit';
 
 type Provider = 'openai' | 'anthropic';
 
@@ -100,7 +101,20 @@ async function anthropic(apiKey: string, prompt: string) {
 
 export async function POST(request: Request) {
   try {
-    const { supabase } = await requireActiveUser();
+    const { supabase, user } = await requireActiveUser();
+    await enforceRateLimit({
+      bucket: 'ai-cover-letter',
+      subject: user.id,
+      limit: 20,
+      windowSeconds: 60 * 60,
+      message: 'Cover letter AI limit reached. Try again in an hour.',
+    });
+    await enforceRateLimit({
+      bucket: 'ai-cover-letter-ip',
+      subject: clientIp(request),
+      limit: 40,
+      windowSeconds: 60 * 60,
+    });
     const body = await readJson(request);
     const provider = providerField(body.provider);
     const apiKey = stringField(body.api_key, 'api_key', { required: true, max: 500 })!;

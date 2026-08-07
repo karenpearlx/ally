@@ -293,7 +293,7 @@ export default function ScraperSection() {
         }
       >
         <p className="text-sm leading-relaxed" style={{ color: 'var(--color-ink-2)' }}>
-          This hits OnlineJobs.ph and RemoteOK live and upserts what it finds. Existing listings are updated
+          This hits OnlineJobs.ph, RemoteOK, and We Work Remotely live and upserts what it finds. Existing listings are updated
           rather than duplicated. It runs on the server, so you can close this tab and the log will still be
           here when you come back. Both sites rate-limit, so avoid firing it repeatedly.
         </p>

@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import LegalDoc, { type LegalSection } from "@/components/LegalDoc";
 import { CONTACT_EMAIL } from "@/lib/contact";
 
-// TODO: swap for a real inbox once the domain is bought.
-// TODO(karen): still a placeholder unless NEXT_PUBLIC_CONTACT_EMAIL is set. See src/lib/contact.ts.
 const CONTACT = CONTACT_EMAIL;
-const UPDATED = "4 August 2026";
+const UPDATED = "8 August 2026";
 
 export const metadata: Metadata = {
   title: "Privacy",
@@ -70,7 +68,7 @@ const SECTIONS: LegalSection[] = [
     id: "job-listings",
     title: "Job listings and applying",
     paragraphs: [
-      "Listings are collected from public job boards, currently OnlineJobs.ph and RemoteOK. Verse does not submit applications for you. When you tap through to apply, you leave Verse and whatever you send is covered by that site's privacy policy and the employer's, not ours.",
+      "Listings are collected from public job boards, currently OnlineJobs.ph, RemoteOK, and We Work Remotely. Verse does not submit applications for you. When you tap through to apply, you leave Verse and whatever you send is covered by that site's privacy policy and the employer's, not ours.",
       "Your tracker entries stay private to your account. Employers cannot browse Verse users.",
     ],
   },
