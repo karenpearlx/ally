@@ -40,12 +40,33 @@ export default function UsersSection() {
   const [reason, setReason] = useState('');
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [planBusy, setPlanBusy] = useState<string | null>(null);
 
   const openModeration = useCallback((user: UserRow) => {
     setActionError(null);
     setReason(user.suspendedReason ?? '');
     setTarget(user);
   }, []);
+
+  const togglePlan = async (user: UserRow) => {
+    const newPlan = user.plan === 'pro' ? 'free' : 'pro';
+    setPlanBusy(user.id);
+    try {
+      const response = await fetch(`/api/admin/users/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'content-type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({ plan: newPlan }),
+      });
+      const payload = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(payload?.error ?? `Failed with ${response.status}.`);
+      reload();
+    } catch (cause) {
+      setActionError(cause instanceof Error ? cause.message : 'Could not update plan.');
+    } finally {
+      setPlanBusy(null);
+    }
+  };
 
   const applyModeration = async () => {
     if (!target) return;
@@ -205,6 +226,7 @@ export default function UsersSection() {
                       <th className="ad-right">Apps</th>
                       <th className="ad-right">Resumes</th>
                       <th className="ad-right">Letters</th>
+                      <th>Plan</th>
                       <th className="ad-right">Manage</th>
                     </tr>
                   </thead>
@@ -241,6 +263,22 @@ export default function UsersSection() {
                         </td>
                         <td className="ad-right" data-label="Letters">
                           {num(user.coverLetters)}
+                        </td>
+                        <td data-label="Plan">
+                          <div className="flex items-center gap-2">
+                            <Tag tone={user.plan === 'pro' ? 'good' : user.plan === 'creator' ? 'good' : undefined}>
+                              {user.plan === 'pro' ? 'Pro' : user.plan === 'creator' ? 'Creator' : 'Free'}
+                            </Tag>
+                            <button
+                              type="button"
+                              className="ad-btn"
+                              style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
+                              disabled={planBusy === user.id}
+                              onClick={() => togglePlan(user)}
+                            >
+                              {planBusy === user.id ? '...' : user.plan === 'pro' ? '→ Free' : '→ Pro'}
+                            </button>
+                          </div>
                         </td>
                         <td className="ad-right" data-label="Manage">
                           <button

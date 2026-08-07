@@ -584,8 +584,8 @@ export async function readUsers(db: SupabaseClient, query = ''): Promise<UsersRe
     signupTimeline = [...buckets.entries()].map(([date, count]) => ({ date, count }));
 
     const columns = moderation
-      ? 'id,email,created_at,updated_at,status,suspended_at,suspended_reason'
-      : 'id,email,created_at,updated_at';
+      ? 'id,email,created_at,updated_at,status,suspended_at,suspended_reason,subscription_tier'
+      : 'id,email,created_at,updated_at,subscription_tier';
 
     let list = db
       .from('users')
@@ -607,6 +607,7 @@ export async function readUsers(db: SupabaseClient, query = ''): Promise<UsersRe
       status?: string | null;
       suspended_at?: string | null;
       suspended_reason?: string | null;
+      subscription_tier?: string | null;
     };
     const raw = (data ?? []) as unknown as Raw[];
     const ids = raw.map((row) => row.id);
@@ -643,6 +644,7 @@ export async function readUsers(db: SupabaseClient, query = ''): Promise<UsersRe
       status: row.status === 'suspended' ? 'suspended' : 'active',
       suspendedAt: row.suspended_at ?? null,
       suspendedReason: row.suspended_reason ?? null,
+      plan: (row.subscription_tier as 'free' | 'pro' | 'creator') ?? 'free',
     }));
   }
 

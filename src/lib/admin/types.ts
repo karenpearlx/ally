@@ -98,6 +98,7 @@ export type UserRow = {
   status: 'active' | 'suspended';
   suspendedAt: string | null;
   suspendedReason: string | null;
+  plan: 'free' | 'pro' | 'creator';
 };
 export type UsersResponse = {
   provisioning: Provisioning;
