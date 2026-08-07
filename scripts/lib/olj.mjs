@@ -1,0 +1,115 @@
+import * as cheerio from 'cheerio';
+
+const clean = (value = '') => value.replace(/\u00a0/g, ' ').replace(/[ \t]+/g, ' ').replace(/\s*\n\s*/g, '\n').trim();
+
+function labelValue($, label) {
+  const heading = $('.job-post h3').filter((_, node) => clean($(node).text()).toUpperCase() === label).first();
+  return clean(heading.closest('dd').find('p').first().text());
+}
+
+function parseAmount(raw) {
+  const match = raw.trim().match(/([\d,.]+)\s*([kKmM])?/);
+  if (!match) return null;
+  const value = Number(match[1].replace(/,/g, ''));
+  if (!Number.isFinite(value)) return null;
+  const suffix = match[2]?.toLowerCase();
+  if (suffix === 'k') return value * 1_000;
+  if (suffix === 'm') return value * 1_000_000;
+  return value;
+}
+
+export function parseSalary(salaryText) {
+  const original = clean(salaryText);
+  if (!original) return { min: null, max: null, currency: null, type: null };
+
+  const text = original.toLowerCase();
+  let currency = null;
+  if (/\b(?:usd|us\s*dollars?)\b|\$/.test(text)) currency = 'USD';
+  else if (/\b(?:php|peso?s?)\b|₱/.test(text)) currency = 'PHP';
+  else if (/\baud\b|\baustralian dollars?\b/.test(text)) currency = 'AUD';
+  else if (/\bnzd\b|\bnew zealand dollars?\b/.test(text)) currency = 'NZD';
+  else if (/\beur\b|€/.test(text)) currency = 'EUR';
+  else if (/\bgbp\b|£/.test(text)) currency = 'GBP';
+
+  let type = 'monthly';
+  if (/(?:\b(?:per|an?)\s*|\/\s*)(?:hour|hr)\b|\/h\b/.test(text)) type = 'hourly';
+  else if (/(?:\b(?:per|an?)\s*|\/\s*)week\b|\/wk\b/.test(text)) type = 'weekly';
+  else if (/(?:\b(?:per|an?)\s*|\/\s*)day\b/.test(text)) type = 'daily';
+  else if (/(?:\b(?:per|an?)\s*|\/\s*)(?:year|yr|annum)\b|annual/.test(text)) type = 'yearly';
+  else if (/(?:\b(?:per|an?)\s*|\/\s*)(?:project|task)\b/.test(text)) type = 'project';
+
+  // OLJ occasionally renders a converted monthly amount and an hourly amount
+  // as "@320 / $2 per hour". In that shape, the value after the slash is the rate.
+  const convertedHourly = type === 'hourly'
+    ? text.match(/@\s*[\d,.]+\s*\/\s*\$?\s*([\d,.]+)/)?.[1]
+    : null;
+  const rawTokens = convertedHourly
+    ? [convertedHourly]
+    : [...text.matchAll(/(?:^|[^a-z\d])([\d][\d,.]*\s*[km]?)(?=$|[^a-z])/gi)].map((match) => match[1]);
+  const amounts = rawTokens.map(parseAmount).filter((value) => value !== null);
+  if (!amounts.length) return { min: null, max: null, currency, type };
+
+  const min = Math.min(...amounts);
+  const max = Math.max(...amounts);
+  return { min, max, currency: currency ?? (min >= 1_000 ? 'PHP' : 'USD'), type };
+}
+
+function parseDate(raw) {
+  const value = clean(raw);
+  if (!value) return null;
+  const date = new Date(`${value} 12:00:00 UTC`);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+function extractCompany($) {
+  const heading = $('*').filter((_, node) => clean($(node).text()).toUpperCase() === 'VIEW OTHER JOB POSTS FROM:').first();
+  if (!heading.length) return null;
+  const candidate = clean(heading.parent().next().find('a, strong, h3, h4').first().text());
+  return candidate || null;
+}
+
+export function parseOLJJob(html, jobUrl, fallbackSlug = '') {
+  const $ = cheerio.load(html);
+  const title = clean($('h1.job__title').first().text()) || clean($('h1').first().text()) || fallbackSlug
+    .replace(/-\d+$/, '')
+    .replace(/-/g, ' ')
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  const description = clean($('#job-description').first().text());
+  const salary = parseSalary(labelValue($, 'WAGE / SALARY'));
+  const workType = labelValue($, 'TYPE OF WORK');
+  const postedAt = parseDate(labelValue($, 'DATE UPDATED'));
+  const skills = $('.card-worker-topskill').map((_, node) => clean($(node).text())).get().filter(Boolean);
+  const sourceId = $('#job-description').attr('data-jobid') ?? fallbackSlug.match(/(\d+)$/)?.[1] ?? fallbackSlug;
+
+  if (!title || !sourceId || !description) {
+    throw new Error(`OLJ detail page did not contain expected job fields: ${jobUrl}`);
+  }
+
+  return {
+    source: 'olj',
+    source_id: sourceId,
+    title,
+    company: extractCompany($),
+    description,
+    salary_min: salary.min,
+    salary_max: salary.max,
+    salary_currency: salary.currency,
+    salary_type: salary.type,
+    skills: skills.length ? skills : ['Virtual Assistant'],
+    experience_level: /senior|lead|manager|director|head of/i.test(`${title} ${description}`) ? 'senior' : /no experience|entry.level|beginner/i.test(description) ? 'entry' : 'mid',
+    job_type: /part[ -]?time/i.test(workType) ? 'part-time' : /full[ -]?time/i.test(workType) ? 'full-time' : clean(workType).toLowerCase() || null,
+    location: 'Philippines',
+    is_remote: true,
+    original_url: jobUrl,
+    posted_at: postedAt,
+    scraped_at: new Date().toISOString(),
+  };
+}
+
+export function extractJobSlugs(html) {
+  const $ = cheerio.load(html);
+  return [...new Set($('a[href*="/jobseekers/job/"]')
+    .map((_, node) => $(node).attr('href')?.match(/\/jobseekers\/job\/([\w-]+)/)?.[1])
+    .get()
+    .filter(Boolean))];
+}
