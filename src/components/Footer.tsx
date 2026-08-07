@@ -73,7 +73,7 @@ export default function Footer() {
         </div>
 
         <p className="mt-10 text-sm" style={{ color: "var(--color-faint)" }}>
-          © {new Date().getFullYear()} Ally
+          © {new Date().getFullYear()} Versified
         </p>
       </div>
     </footer>

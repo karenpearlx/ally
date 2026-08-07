@@ -7,7 +7,7 @@ export default function Login() {
   return (
     <AuthShell
       eyebrow="Welcome back"
-      title="Sign in to Ally"
+      title="Sign in to Versified"
       sub="Pick up where you left off."
       aside={{
         heading: "What's waiting for you",

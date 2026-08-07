@@ -333,7 +333,7 @@ function CoverLetter() {
             <p className="mt-2.5 text-[0.8125rem]" style={{ color: 'var(--color-faint)' }}>
               {mode === 'template'
                 ? 'Free, instant, works without an account.'
-                : 'Runs on your own API key. Nothing is charged to Ally, and nothing is stored on our side.'}
+                : 'Runs on your own API key. Nothing is charged to Versified, and nothing is stored on our side.'}
             </p>
 
             <h2 className="font-display mt-7 text-xl font-extrabold tracking-tight">The job post</h2>
@@ -352,7 +352,7 @@ function CoverLetter() {
             {listing.trim() && (
               <div className="mt-4">
                 <p className="eyebrow" style={{ color: 'var(--color-faint)' }}>
-                  What Ally spotted
+                  What Versified spotted
                 </p>
                 <div className="mt-2.5 flex flex-wrap gap-1.5">
                   {detected.skills.length === 0 && detected.tools.length === 0 && (
@@ -523,7 +523,7 @@ function CoverLetter() {
 
                   <p id="keyhelp" className="text-[0.8125rem] leading-relaxed" style={{ color: 'var(--color-muted)' }}>
                     Your key is kept in this browser&rsquo;s local storage and sent straight to{' '}
-                    {provider === 'openai' ? 'OpenAI' : 'Anthropic'} for each request. Ally never
+                    {provider === 'openai' ? 'OpenAI' : 'Anthropic'} for each request. Versified never
                     stores it, never logs it, and it never appears in a URL. Anyone with access to
                     this device or a script running on this page could read it, so use a key with a
                     spending limit and remove it when you&rsquo;re done.

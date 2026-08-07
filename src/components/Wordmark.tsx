@@ -4,7 +4,7 @@ export default function Wordmark({ size = "md", className = "" }: { size?: "sm" 
   return (
     <Link
       href="/"
-      aria-label="Ally — home"
+      aria-label="Versified — home"
       className={`font-display inline-flex items-baseline text-accent max-md:min-h-[44px] ${className}`}
       style={{
         fontWeight: 800,
@@ -12,7 +12,7 @@ export default function Wordmark({ size = "md", className = "" }: { size?: "sm" 
         fontSize: size === "sm" ? "1.25rem" : "1.5rem",
       }}
     >
-      ally
+      versified
       <span className="text-ink">.</span>
     </Link>
   );

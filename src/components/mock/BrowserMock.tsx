@@ -67,7 +67,7 @@ export default function BrowserMock() {
             <rect x="1" y="5" width="8" height="6" rx="1.6" stroke="currentColor" strokeWidth="1.1" />
             <path d="M3 5V3.4a2 2 0 1 1 4 0V5" stroke="currentColor" strokeWidth="1.1" />
           </svg>
-          ally.work
+          vrsfd.com
         </div>
         <span className="w-[30px] flex-none sm:w-[54px]" aria-hidden />
       </div>
@@ -79,7 +79,7 @@ export default function BrowserMock() {
             className="font-display text-sm font-extrabold tracking-tight"
             style={{ color: "var(--color-accent)" }}
           >
-            ally<span style={{ color: "var(--color-ink)" }}>.</span>
+            versified<span style={{ color: "var(--color-ink)" }}>.</span>
           </span>
           <nav className="no-bar flex gap-4 overflow-x-auto text-[0.75rem]">
             {["Jobs", "Rate check", "Learn", "Courses"].map((t, i) => (

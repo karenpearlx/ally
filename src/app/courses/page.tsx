@@ -7,7 +7,7 @@ const COURSES = [
   {
     tag: "Foundations",
     title: "The Complete VA Starter",
-    author: "Ally team",
+    author: "Versified team",
     length: "12 lessons · 2h 10m",
     price: "Free",
     blurb: "Everything from setting up your workspace to sending your first invoice.",
@@ -17,7 +17,7 @@ const COURSES = [
   {
     tag: "Writing",
     title: "Applications That Get Replies",
-    author: "Ally team",
+    author: "Versified team",
     length: "7 lessons · 55m",
     price: "Free",
     blurb: "The short human cover letter format, plus 14 annotated real examples.",
@@ -27,7 +27,7 @@ const COURSES = [
   {
     tag: "Money",
     title: "Pricing & Negotiation",
-    author: "Ally team",
+    author: "Versified team",
     length: "9 lessons · 1h 20m",
     price: "Free",
     blurb: "Quote a number, hold it, and raise it later without losing the client.",
