@@ -1032,16 +1032,15 @@ export default function ProfileForm({
         </div>
       </div>
 
-      {/* Save bar. Sticky rather than fixed so it never covers the footer. */}
+      {/* Save bar. Fixed at the bottom of the viewport, above the mobile nav. */}
       {/* Only show when there are changes, or we're mid-save, or just saved, or error */}
       {editing && (dirty || state.kind !== "idle") && (
         <div
-          className="pointer-events-none sticky z-30 mx-auto mt-6 max-w-6xl px-1"
-          // Clears the mobile tab bar; --ally-bottomnav is 0px wherever it is absent.
+          className="pointer-events-none fixed inset-x-0 z-30 px-4"
           style={{ bottom: "calc(1rem + var(--ally-bottomnav, 0px))" }}
         >
           <div
-            className="pointer-events-auto flex flex-wrap items-center justify-between gap-3 px-5 py-4"
+            className="pointer-events-auto mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-4"
             style={{
               background: "var(--color-surface)",
               border: "1px solid var(--color-line)",
