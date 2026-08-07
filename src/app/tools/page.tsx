@@ -8,7 +8,7 @@ import GradientBg from "@/components/GradientBg";
 export const metadata: Metadata = {
   title: "Tools",
   description:
-    "The Verse toolkit: rate check, interview prep, resume builder, cover letter builder and the follow-up writer. Free for Filipino VAs.",
+    "The Verse toolkit: rate check, interview prep, resume builder, cover letter builder and the follow-up writer. Free plan plus Pro.",
 };
 
 /**
@@ -154,7 +154,7 @@ export default function ToolsPage() {
           </h1>
           <p className="lede mt-5 max-w-xl">
             The job board finds the work. These are for everything between finding it and
-            getting paid for it. All free, all saved to your account.
+            getting paid for it. Free plan covers the basics; Pro is there when you are applying hard.
           </p>
         </div>
       </section>

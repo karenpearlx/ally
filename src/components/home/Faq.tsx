@@ -18,8 +18,8 @@ const FAQ: Item[] = [
   {
     q: "Is Verse really free?",
     a: [
-      "Yes. Every part of it — the job feed, unlimited application tracking, the rate calculator, the resume and cover letter builders, all the courses. No trial timer, no card, no locked tier waiting at the bottom of the page.",
-      "Verse does not take a cut of your pay and is not an agency, so there is no placement fee either. You apply on the original site and the client pays you directly.",
+      "There is a free plan and a Pro plan. Free covers the job board, unlimited application tracking, the rate calculator, basic courses, and limited cover letters and resume exports — no trial timer and no card to start.",
+      "Pro is for the month you are applying hard: unlimited letters and exports, every premium course, early job access, interview prep and the follow-up writer. Verse never takes a cut of your pay and is not an agency, so there is no placement fee either way.",
     ],
   },
   {
@@ -33,7 +33,7 @@ const FAQ: Item[] = [
     q: "How is this different from other job trackers?",
     a: [
       "Most job trackers are built for the general job market — local roles, corporate jobs, broad platforms — and many charge once you hit a certain number of applications.",
-      "Verse is only for Filipino VAs chasing remote clients. That focus is the whole point: the sources are VA boards, the rate calculator is in pesos against real client budgets, the courses are about landing your first client, and tracking stays unlimited and free.",
+      "Verse is only for Filipino VAs chasing remote clients. That focus is the whole point: the sources are VA boards, the rate calculator is in pesos against real client budgets, the courses are about landing your first client, and the free plan keeps tracking unlimited.",
     ],
   },
   {

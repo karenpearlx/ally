@@ -120,7 +120,7 @@ export default function Privacy() {
       titleTail=", and why"
       updated={UPDATED}
       summary={[
-        "Verse is free. You are not the product and there is nothing to sell, because we never sell your data.",
+        "We never sell your data. Free or Pro, you are not the product.",
         "We collect what the tools need: your email, your profile, the jobs you track, the documents you make.",
         "Analytics are anonymous. Your raw IP address is never stored and there are no ad trackers.",
         "AI mode sends your job text to OpenAI or Anthropic. Template mode sends it nowhere.",

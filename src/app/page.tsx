@@ -106,7 +106,7 @@ export default async function Home() {
           </Reveal>
           <Reveal delay={120}>
             <p className="mt-8 text-center text-sm md:text-base" style={{ color: "var(--color-muted)" }}>
-              Free. No agency, no placement fee. Just Verse.
+              Free to start. No agency, no placement fee.
             </p>
           </Reveal>
         </div>
@@ -196,7 +196,7 @@ export default async function Home() {
 
           <Reveal delay={160}>
             <p className="mt-8 text-center text-sm" style={{ color: "var(--color-muted)" }}>
-              All four are free with an account. No trial, no card.
+              Core tools come with a free account. Pro unlocks unlimited letters, exports and premium courses.
             </p>
           </Reveal>
         </div>

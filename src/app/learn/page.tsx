@@ -63,7 +63,7 @@ const FAQ = [
   },
   {
     q: "Is this free?",
-    a: "The lessons are free. Verse makes nothing off placements and never sits between you and a client.",
+    a: "Starter tracks are free. Premium specialisms are on Pro. Verse makes nothing off placements and never sits between you and a client.",
   },
 ];
 

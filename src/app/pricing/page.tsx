@@ -8,7 +8,7 @@ import { PRO_ACCESS_DAYS, PRO_PRICE_PESOS } from '@/lib/plans';
 
 export const metadata = {
   title: 'Pricing — Verse',
-  description: `Verse is free to use, with counters on the expensive parts. Pro is ₱${PRO_PRICE_PESOS} a month for unlimited letters, exports and premium courses.`,
+  description: `Free plan for the board, tracker and rate check. Pro is ₱${PRO_PRICE_PESOS} a month for unlimited letters, exports and premium courses.`,
 };
 
 const FAQ = [

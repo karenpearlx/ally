@@ -41,7 +41,7 @@ const APPEAR_DELAY = 550;
 
 const BENEFITS = [
   { key: "jobs", text: (count: string) => `${count} VA jobs, updated daily` },
-  { key: "track", text: () => "Track your applications in one place, free" },
+  { key: "track", text: () => "Track your applications in one place on the free plan" },
   { key: "learn", text: () => "Free foundation courses to lift your rate" },
   { key: "rate", text: () => "Know what you're worth with real rate data" },
 ];

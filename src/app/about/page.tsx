@@ -8,14 +8,14 @@ import GradientBg from "@/components/GradientBg";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Why Verse exists: one place for Filipino VAs to find work, learn the job, and know what to charge. Free, no agency in the middle.",
+    "Why Verse exists: one place for Filipino VAs to find work, learn the job, and know what to charge. Free plan and Pro — no agency in the middle.",
 };
 
 const PRINCIPLES = [
   {
     kicker: "01",
-    title: "Free, and staying that way",
-    body: "No placement fee, no cut of your pay, no ₱15,000 course at the end of a funnel. If Verse ever needs money to run, it will come from somewhere that is not your salary.",
+    title: "Free to start, Pro when you need it",
+    body: "No placement fee, no cut of your pay, no ₱15,000 course at the end of a funnel. The free plan covers the board, tracker and rate check. Pro is optional for the month you are applying hard.",
   },
   {
     kicker: "02",
@@ -64,7 +64,7 @@ export default function About() {
             Filipino virtual assistants do serious work for clients on the other side of the
             world, then get told what they are worth by people taking a cut. The tools that
             could fix that were scattered across five sites, half of them paid. So this is all
-            of them, in one place, free.
+            of them in one place — free to start, with Pro when you want unlimited tools.
           </p>
 
           <div className="mt-9 flex flex-wrap gap-3">

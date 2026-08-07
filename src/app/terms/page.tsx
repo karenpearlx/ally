@@ -8,7 +8,7 @@ const UPDATED = "8 August 2026";
 export const metadata: Metadata = {
   title: "Terms",
   description:
-    "The rules for using Verse. Free to use, no placement fees, and no promises we cannot keep.",
+    "The rules for using Verse. Free plan and optional Pro, no placement fees, and no promises we cannot keep.",
 };
 
 const SECTIONS: LegalSection[] = [
@@ -16,7 +16,7 @@ const SECTIONS: LegalSection[] = [
     id: "what-ally-is",
     title: "What Verse is",
     paragraphs: [
-      "Verse is a free set of tools for Filipino virtual assistants: a job board pulled from public listings, a cover letter and resume builder, an application tracker, a rate checker, and lessons.",
+      "Verse is a set of tools for Filipino virtual assistants: a job board pulled from public listings, a cover letter and resume builder, an application tracker, a rate checker, and lessons. A free plan covers the core tools; Pro is optional paid access for higher limits and premium courses.",
       "Verse is not an agency, a recruiter, or an employer. We are not a party to anything you agree with a client. We never take a cut of your pay and never charge a placement fee.",
       "Using Verse means you accept these terms. If you do not, please do not use it.",
     ],
@@ -84,7 +84,7 @@ const SECTIONS: LegalSection[] = [
     id: "availability",
     title: "Availability",
     paragraphs: [
-      "Verse is a small, free project. Features get added, changed, or removed. The site will occasionally be down, and a scraper run will occasionally fail. We do not promise uptime.",
+      "Verse is a small product. Features get added, changed, or removed. The site will occasionally be down, and a scraper run will occasionally fail. We do not promise uptime.",
       "We can suspend or close an account that breaks these terms, and we will say why where we reasonably can.",
     ],
   },
@@ -93,7 +93,7 @@ const SECTIONS: LegalSection[] = [
     title: "Liability",
     paragraphs: [
       "Verse is provided as is, with no warranties beyond those the law will not let us disclaim.",
-      "To the fullest extent Philippine law allows, we are not liable for lost work, lost income, bad hires, dodgy clients, missed opportunities, or data loss arising from your use of Verse. Since the service is free, our total liability is limited to what you paid us, which is nothing.",
+      "To the fullest extent Philippine law allows, we are not liable for lost work, lost income, bad hires, dodgy clients, missed opportunities, or data loss arising from your use of Verse. Our total liability is limited to what you paid us for Pro in the twelve months before the claim — or nothing, if you only used the free plan.",
     ],
   },
   {
@@ -127,7 +127,7 @@ export default function Terms() {
       titleTail=", in plain words"
       updated={UPDATED}
       summary={[
-        "Verse is free. No placement fees, no cut of your pay, no agency in the middle.",
+        "Free plan and optional Pro. No placement fees, no cut of your pay, no agency in the middle.",
         "We are not a recruiter. Listings come from other sites and we do not vet employers, so check before you apply.",
         "Nobody can promise you a job, and we are not going to pretend to.",
         "Your resumes, letters, and notes stay yours. Read anything the AI writes before you send it.",
