@@ -11,13 +11,40 @@
   --color-surface: #ffffff;
   --color-ink: #21201e;
   --color-ink-2: #4a4845;
-  --color-muted: #7d7a75;
-  --color-faint: #a3a09a;
+  --color-muted: #67645f;
+  --color-faint: #736f68;
   --color-line: #e9e6e1;
   --color-line-2: #dedad4;
-  --color-accent: #0d9b8a;
-  --color-accent-deep: #0a7d6f;
+  --color-accent: #097769;
+  --color-accent-deep: #075f55;
   --color-accent-soft: #e6f4f1;
+
+  /* --- deep course palette (matches the written tracks) --- */
+  --color-paper-3: #f1efec;
+  --color-card: #ffffff;
+  --color-muted-2: #67645f;
+  --color-line-3: #b0aaa1;
+  --color-line-input: #cbc6bf;
+
+  --color-teal: #097769;
+  --color-teal-deep: #075f55;
+  --color-teal-mid: #5fd0bf;
+  --color-teal-soft: #6cc7b8;
+  --color-teal-pale: #c3e6df;
+  --color-teal-wash: #e6f4f1;
+
+  --color-clay: #a94f1b;
+  --color-clay-bright: #e07a2f;
+  --color-clay-deep: #8a4318;
+  --color-clay-wash: #fdf0e8;
+
+  --color-leaf: #2f7a45;
+  --color-leaf-wash: #e9f6ec;
+
+  --color-indigo: #4453b8;
+  --color-indigo-wash: #eef2ff;
+
+  --shadow-tile: 0 1px 2px rgba(28, 26, 23, 0.04), 0 6px 16px -8px rgba(28, 26, 23, 0.1);
 
   --radius-card: 28px;
   --radius-panel: 20px;

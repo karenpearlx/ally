@@ -11,6 +11,9 @@ import UpgradeGate from "@/components/UpgradeGate";
 import { BASIC_COURSES, OPEN_COURSES, courseBySlug, courseLength } from "@/lib/courses";
 import { createClient } from "@/lib/supabase/server";
 import { hasPaidAccess, readSubscription } from "@/lib/subscription";
+import { getDeepCourse } from "@/lib/deep-courses";
+import { COURSES_INDEX } from "@/lib/deep-courses/index-meta";
+import DeepCourseView from "./DeepCourseView";
 
 type Params = { params: Promise<{ slug: string }> };
 
@@ -22,6 +25,14 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: Params) {
   const { slug } = await params;
+  const deep = getDeepCourse(slug);
+  if (deep) {
+    const card = COURSES_INDEX.cards.find((c) => c.slug === slug);
+    return {
+      title: `${deep.title} — Versified`,
+      description: card?.blurb,
+    };
+  }
   const course = courseBySlug(slug);
   if (!course) return { title: "Course not found — Versified" };
   return {
@@ -49,8 +60,7 @@ function Head({ eyebrow, title, note }: { eyebrow: string; title: string; note?:
 
 export default async function CoursePage({ params }: Params) {
   const { slug } = await params;
-  const course = courseBySlug(slug);
-  if (!course) notFound();
+  const deep = getDeepCourse(slug);
 
   const supabase = await createClient();
   const {
@@ -58,6 +68,13 @@ export default async function CoursePage({ params }: Params) {
   } = await supabase.auth.getUser();
   const account = user ? await readSubscription(supabase, user.id) : null;
   const paid = Boolean(account && hasPaidAccess(account));
+
+  // The written tracks are the main course library. Everything below is the
+  // older niche-track renderer, kept so those slugs still resolve.
+  if (deep) return <DeepCourseView course={deep} paid={paid} />;
+
+  const course = courseBySlug(slug);
+  if (!course) notFound();
   const locked = Boolean(course.premium) && !paid;
 
   const soon = course.status === "soon";

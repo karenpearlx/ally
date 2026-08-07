@@ -16,11 +16,12 @@ import { TOTAL_QUESTIONS } from "@/lib/interview";
 import { CREATOR_MAILTO } from "@/lib/plans";
 import { createClient } from "@/lib/supabase/server";
 import { hasPaidAccess, readSubscription } from "@/lib/subscription";
+import DeepCourseIndex from "@/components/deep/DeepCourseIndex";
 
 export const metadata = {
   title: "Courses — Versified",
   description:
-    "Free VA foundations you can read right now, plus premium niche tracks for every specialism on the job board.",
+    "Nine written VA tracks with worked examples, exercises, rate benchmarks and a glossary, plus premium niche tracks for every specialism on the job board.",
 };
 
 /** The lock state depends on the session, so this page is never cached. */
@@ -113,22 +114,7 @@ export default async function Courses() {
       <GradientBg position="right" />
       <Nav />
 
-      <section className="px-5 pt-28 md:px-8 md:pt-40">
-        <div className="mx-auto max-w-5xl">
-          <p className="eyebrow">Courses</p>
-          <h1 className="display-lg mt-4 max-w-3xl">
-            Learn one skill properly<span className="dot">.</span>
-          </h1>
-          <p className="lede mt-5 max-w-xl">
-            Depth beats breadth. One specialism you can prove will out-earn a list of ten things you
-            &ldquo;have experience with&rdquo;.
-          </p>
-          <p className="mt-6 text-sm" style={{ color: "var(--color-faint)" }}>
-            {BASIC_COURSES.length} free with any account · {PREMIUM_COURSES.length} premium niche tracks ·{" "}
-            {COURSES.length} total
-          </p>
-        </div>
-      </section>
+      <DeepCourseIndex paid={paid} />
 
       <section className="px-5 pt-14 md:px-8 md:pt-20">
         <div className="mx-auto max-w-5xl">
