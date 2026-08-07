@@ -1,4 +1,4 @@
-import { ApiError, apiError, readJson, requireUser, stringField, urlField } from '@/lib/api';
+import { ApiError, apiError, paginationFrom, paginationMeta, readJson, requireActiveUser, requireUser, stringField, urlField } from '@/lib/api';
 
 const STATUSES = ['saved', 'applied', 'follow_up', 'interviewing', 'offer', 'accepted', 'rejected', 'withdrawn'] as const;
 
@@ -36,10 +36,11 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const needsFollowUp = url.searchParams.get('needs_follow_up') === 'true';
     const status = url.searchParams.get('status');
+    const { limit, offset } = paginationFrom(request);
 
     let query = supabase
       .from('applications')
-      .select('*')
+      .select('id,job_url,job_title,company,status,notes,follow_up_date,created_at,updated_at', { count: 'exact' })
       .eq('user_id', user.id)
       .order('updated_at', { ascending: false });
 
@@ -52,9 +53,13 @@ export async function GET(request: Request) {
       query = query.eq('status', parseStatus(status));
     }
 
-    const { data, error } = await query;
+    const { data, error, count } = await query.range(offset, offset + limit - 1);
     if (error) throw error;
-    return Response.json({ applications: data ?? [] });
+    const applications = data ?? [];
+    return Response.json({
+      applications,
+      pagination: paginationMeta(count, limit, offset, applications.length),
+    });
   } catch (error) {
     return apiError(error);
   }
@@ -62,9 +67,21 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const { supabase, user } = await requireUser();
+    const { supabase, user } = await requireActiveUser();
     const body = await readJson(request);
     const status = parseStatus(body.status, 'applied');
+
+    if (status === 'saved') {
+      const [{ data: account }, { count, error: countError }] = await Promise.all([
+        supabase.from('users').select('subscription_tier,subscription_status,subscription_ends_at').eq('id', user.id).maybeSingle(),
+        supabase.from('applications').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'saved'),
+      ]);
+      if (countError) throw countError;
+      const paid = ['pro', 'creator'].includes(account?.subscription_tier)
+        && account?.subscription_status === 'active'
+        && (!account?.subscription_ends_at || new Date(account.subscription_ends_at).getTime() > Date.now());
+      if (!paid && (count ?? 0) >= 20) throw new ApiError(403, 'Free plans can save up to 20 jobs. Upgrade to Pro for unlimited saved jobs.');
+    }
 
     const { data: settings } = await supabase
       .from('users')

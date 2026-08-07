@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Reveal from "../Reveal";
+import PointerCard from "../PointerCard";
 
 function CoverLetterArt() {
   return (
@@ -138,13 +139,13 @@ function ReminderArt() {
         </span>
       </div>
       <div
-        className="mt-2.5 flex items-start gap-2.5 rounded-xl p-3"
+        className="mt-2.5 flex items-start gap-2.5 rounded-xl p-3 overflow-visible"
         style={{ background: "#fdf0e8" }}
       >
-        <span className="mt-0.5 text-sm" aria-hidden>
+        <span className="mt-0.5 text-sm shrink-0" aria-hidden>
           🔔
         </span>
-        <p className="text-[0.6875rem] leading-relaxed" style={{ color: "#8a4318" }}>
+        <p className="text-[0.6875rem] leading-relaxed min-w-0" style={{ color: "#8a4318" }}>
           <strong>Peakline Media</strong> hasn&rsquo;t replied in 7 days. Want to send a follow-up?
         </p>
       </div>
@@ -192,7 +193,7 @@ export default function ToolkitCards() {
     <div className="grid gap-5 md:grid-cols-2">
       {TOOLS.map((t, i) => (
         <Reveal key={t.n} delay={(i % 2) * 90}>
-          <article className="card flex h-full flex-col p-7 md:p-8">
+          <PointerCard as="article" className="card lift flex h-full flex-col p-7 md:p-8">
             <p
               className="font-display text-sm font-extrabold tracking-[0.1em]"
               style={{ color: "var(--color-accent)" }}
@@ -217,7 +218,7 @@ export default function ToolkitCards() {
                 <path d="M1 6h13m-4.5-4.5L14 6l-4.5 4.5" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </Link>
-          </article>
+          </PointerCard>
         </Reveal>
       ))}
     </div>

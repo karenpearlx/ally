@@ -1,4 +1,4 @@
-import { ApiError, apiError, jsonObject, readJson, requireUser, stringField, uuidField } from '@/lib/api';
+import { ApiError, apiError, jsonObject, readJson, requireActiveUser, requireUser, stringField, uuidField } from '@/lib/api';
 import { RESUME_TEMPLATES } from '@/lib/resume';
 
 function patchFrom(body: Record<string, unknown>) {
@@ -24,8 +24,9 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
     const { supabase, user } = await requireUser();
     const { id } = await context.params;
     const { data, error } = await supabase.from('resumes').select('*')
-      .eq('id', uuidField(id)).eq('user_id', user.id).single();
+      .eq('id', uuidField(id)).eq('user_id', user.id).maybeSingle();
     if (error) throw error;
+    if (!data) throw new ApiError(404, 'Resume not found.');
     return Response.json({ resume: data });
   } catch (error) {
     return apiError(error);
@@ -34,11 +35,12 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
 
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const { supabase, user } = await requireUser();
+    const { supabase, user } = await requireActiveUser();
     const { id } = await context.params;
     const { data, error } = await supabase.from('resumes').update(patchFrom(await readJson(request)))
-      .eq('id', uuidField(id)).eq('user_id', user.id).select().single();
+      .eq('id', uuidField(id)).eq('user_id', user.id).select().maybeSingle();
     if (error) throw error;
+    if (!data) throw new ApiError(404, 'Resume not found.');
     return Response.json({ resume: data });
   } catch (error) {
     return apiError(error);
@@ -47,11 +49,12 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
 
 export async function DELETE(_request: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const { supabase, user } = await requireUser();
+    const { supabase, user } = await requireActiveUser();
     const { id } = await context.params;
-    const { error } = await supabase.from('resumes').delete()
-      .eq('id', uuidField(id)).eq('user_id', user.id);
+    const { data, error } = await supabase.from('resumes').delete()
+      .eq('id', uuidField(id)).eq('user_id', user.id).select('id').maybeSingle();
     if (error) throw error;
+    if (!data) throw new ApiError(404, 'Resume not found.');
     return new Response(null, { status: 204 });
   } catch (error) {
     return apiError(error);

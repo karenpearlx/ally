@@ -2,73 +2,115 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
+import CourseDone from "@/components/CourseDone";
+import GradientBg from "@/components/GradientBg";
+import {
+  BASIC_COURSES,
+  COURSES,
+  PREMIUM_COURSES,
+  SOON_COURSES,
+  courseLength,
+  type Course,
+} from "@/lib/courses";
+import { TOTAL_QUESTIONS } from "@/lib/interview";
+import { CREATOR_MAILTO } from "@/lib/plans";
+import { createClient } from "@/lib/supabase/server";
+import { hasPaidAccess, readSubscription } from "@/lib/subscription";
 
-const COURSES = [
-  {
-    tag: "Foundations",
-    title: "The Complete VA Starter",
-    author: "Versified team",
-    length: "12 lessons · 2h 10m",
-    price: "Free",
-    blurb: "Everything from setting up your workspace to sending your first invoice.",
-    tint: "#e6f4f1",
-    fg: "#0a7d6f",
-  },
-  {
-    tag: "Writing",
-    title: "Applications That Get Replies",
-    author: "Versified team",
-    length: "7 lessons · 55m",
-    price: "Free",
-    blurb: "The short human cover letter format, plus 14 annotated real examples.",
-    tint: "#eef2ff",
-    fg: "#4453b8",
-  },
-  {
-    tag: "Money",
-    title: "Pricing & Negotiation",
-    author: "Versified team",
-    length: "9 lessons · 1h 20m",
-    price: "Free",
-    blurb: "Quote a number, hold it, and raise it later without losing the client.",
-    tint: "#fdf0e8",
-    fg: "#b5581f",
-  },
-  {
-    tag: "Specialism",
-    title: "SEO for Virtual Assistants",
-    author: "Guest instructor",
-    length: "14 lessons · 2h 45m",
-    price: "Coming soon",
-    blurb: "The highest-paying skill on the board right now, taught from scratch.",
-    tint: "#f2effa",
-    fg: "#5b46a8",
-  },
-  {
-    tag: "Specialism",
-    title: "Bookkeeping Basics (Xero)",
-    author: "Guest instructor",
-    length: "11 lessons · 1h 50m",
-    price: "Coming soon",
-    blurb: "Enough to take on AR/AP work for a small US or AU business.",
-    tint: "#e9f6ec",
-    fg: "#2f7a45",
-  },
-  {
-    tag: "Ops",
-    title: "Becoming an Operations Lead",
-    author: "Guest instructor",
-    length: "10 lessons · 1h 35m",
-    price: "Coming soon",
-    blurb: "How VAs move from task-taker to the person who runs the system.",
-    tint: "#fbecef",
-    fg: "#a83d55",
-  },
-];
+export const metadata = {
+  title: "Courses — Versified",
+  description:
+    "Free VA foundations you can read right now, plus premium niche tracks for every specialism on the job board.",
+};
 
-export default function Courses() {
+/** The lock state depends on the session, so this page is never cached. */
+export const dynamic = "force-dynamic";
+
+function LockIcon() {
+  return (
+    <svg width="12" height="13" viewBox="0 0 12 13" fill="none" aria-hidden className="flex-none">
+      <rect x="1.6" y="5.4" width="8.8" height="6.4" rx="1.8" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M3.9 5.4V3.9a2.1 2.1 0 0 1 4.2 0v1.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CourseCard({ c, i, paid }: { c: Course; i: number; paid: boolean }) {
+  const soon = c.status === "soon";
+  const locked = Boolean(c.premium) && !paid;
+
+  return (
+    <Reveal delay={(i % 3) * 70}>
+      <Link
+        href={`/courses/${c.slug}`}
+        className="lift card flex h-full flex-col overflow-hidden transition-transform"
+        aria-label={`${c.title}${soon ? " — coming soon" : locked ? " — premium, locked" : ""}`}
+      >
+        <div className="flex h-24 items-end justify-between gap-3 p-5" style={{ background: c.tint }}>
+          <span
+            className="font-display rounded-full bg-white/70 px-3 py-1 text-xs font-bold uppercase tracking-[0.1em]"
+            style={{ color: c.fg }}
+          >
+            {c.tag}
+          </span>
+          {soon ? (
+            <span
+              className="rounded-full bg-white/70 px-2.5 py-1 text-[0.6875rem] font-semibold uppercase tracking-[0.08em]"
+              style={{ color: "var(--color-muted)" }}
+            >
+              Coming soon
+            </span>
+          ) : locked ? (
+            <span
+              className="flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[0.6875rem] font-bold uppercase tracking-[0.08em]"
+              style={{ background: "var(--color-ink)", color: "#5fd0bf" }}
+            >
+              <LockIcon />
+              Premium
+            </span>
+          ) : (
+            <CourseDone slug={c.slug} lessonCount={c.lessons?.length ?? 0} />
+          )}
+        </div>
+
+        <div className="flex flex-1 flex-col p-6">
+          <h3 className="font-display text-xl font-extrabold leading-snug tracking-tight">{c.title}</h3>
+          <p className="mt-2.5 text-[0.9375rem] leading-relaxed" style={{ color: "var(--color-muted)" }}>
+            {c.blurb}
+          </p>
+
+          <div
+            className="mt-auto flex items-center justify-between gap-3 border-t pt-4 text-sm"
+            style={{ borderColor: "var(--color-line)", marginTop: "1.5rem" }}
+          >
+            <span className="flex flex-wrap items-center gap-x-2" style={{ color: "var(--color-faint)" }}>
+              {courseLength(c)}
+              {locked ? null : <CourseDone slug={c.slug} lessonCount={c.lessons?.length ?? 0} variant="line" />}
+            </span>
+            <span
+              className="font-display font-bold"
+              style={{ color: soon ? "var(--color-faint)" : "var(--color-accent)" }}
+            >
+              {soon ? "Preview →" : locked ? "Unlock →" : c.premium ? "Read it →" : "Read free →"}
+            </span>
+          </div>
+        </div>
+      </Link>
+    </Reveal>
+  );
+}
+
+export default async function Courses() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const account = user ? await readSubscription(supabase, user.id) : null;
+  const paid = Boolean(account && hasPaidAccess(account));
+
   return (
     <div className="min-h-screen">
+      <GradientBg position="right" />
       <Nav />
 
       <section className="px-5 pt-28 md:px-8 md:pt-40">
@@ -81,82 +123,144 @@ export default function Courses() {
             Depth beats breadth. One specialism you can prove will out-earn a list of ten things you
             &ldquo;have experience with&rdquo;.
           </p>
+          <p className="mt-6 text-sm" style={{ color: "var(--color-faint)" }}>
+            {BASIC_COURSES.length} free with any account · {PREMIUM_COURSES.length} premium niche tracks ·{" "}
+            {COURSES.length} total
+          </p>
         </div>
       </section>
 
       <section className="px-5 pt-14 md:px-8 md:pt-20">
-        <div className="mx-auto grid max-w-5xl gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {COURSES.map((c, i) => {
-            const soon = c.price === "Coming soon";
-            return (
-              <Reveal key={c.title} delay={(i % 3) * 80}>
-                <article className="card flex h-full flex-col overflow-hidden">
-                  <div
-                    className="flex h-28 items-end p-5"
-                    style={{ background: c.tint }}
-                  >
-                    <span
-                      className="font-display rounded-full bg-white/70 px-3 py-1 text-xs font-bold uppercase tracking-[0.1em]"
-                      style={{ color: c.fg }}
-                    >
-                      {c.tag}
+        <div className="mx-auto max-w-5xl">
+          <Reveal>
+            <div className="card overflow-hidden">
+              <div className="grid md:grid-cols-[1.15fr_1fr]">
+                <div className="p-7 md:p-10">
+                  <p className="eyebrow">Practice, not reading</p>
+                  <h2 className="font-display mt-3 text-2xl font-extrabold leading-tight tracking-tight md:text-[2rem]">
+                    Interview prep<span className="dot">.</span>
+                  </h2>
+                  <p className="mt-3 max-w-md text-[0.9375rem] leading-relaxed" style={{ color: "var(--color-muted)" }}>
+                    {TOTAL_QUESTIONS} questions clients actually ask, sorted by niche. Answer out loud or in writing,
+                    watch your own timing and filler words, and get the answer graded before someone who can hire you
+                    hears it.
+                  </p>
+                  <div className="mt-7 flex flex-wrap items-center gap-4">
+                    <Link href="/interview-prep" className="btn btn-primary">
+                      {paid ? "Start practising" : "See interview prep"}
+                    </Link>
+                    <span className="text-sm" style={{ color: "#6b6863" }}>
+                      {paid ? "Included in your plan" : "Included with Pro"}
                     </span>
                   </div>
+                </div>
 
-                  <div className="flex flex-1 flex-col p-6">
-                    <h2 className="font-display text-xl font-extrabold leading-snug tracking-tight">
-                      {c.title}
-                    </h2>
+                <div
+                  className="flex flex-col justify-center gap-3 p-7 md:p-10"
+                  style={{ background: "var(--color-accent-soft)" }}
+                >
+                  {[
+                    "Tell me about yourself.",
+                    "How do you handle multiple clients at once?",
+                    "Describe your internet and backup setup.",
+                  ].map((q) => (
                     <p
-                      className="mt-2.5 text-[0.9375rem] leading-relaxed"
-                      style={{ color: "var(--color-muted)" }}
+                      key={q}
+                      className="rounded-2xl bg-white/80 px-4 py-3 text-[0.9375rem] font-medium leading-snug"
+                      style={{ color: "var(--color-ink-2)" }}
                     >
-                      {c.blurb}
+                      {q}
                     </p>
-
-                    <div
-                      className="mt-auto flex items-center justify-between border-t pt-4 text-sm"
-                      style={{ borderColor: "var(--color-line)", marginTop: "1.5rem" }}
-                    >
-                      <span style={{ color: "var(--color-faint)" }}>{c.length}</span>
-                      <span
-                        className="font-display font-bold"
-                        style={{ color: soon ? "var(--color-faint)" : "var(--color-accent)" }}
-                      >
-                        {c.price}
-                      </span>
-                    </div>
-                  </div>
-                </article>
-              </Reveal>
-            );
-          })}
+                  ))}
+                </div>
+              </div>
+            </div>
+          </Reveal>
         </div>
+      </section>
 
-        <div className="mx-auto mt-14 max-w-3xl">
-          <div
-            className="rounded-[28px] px-7 py-12 text-center md:px-14"
-            style={{ background: "var(--color-ink)" }}
-          >
-            <h2 className="display-md" style={{ color: "#fff" }}>
-              Taught a VA skill before
-              <span style={{ color: "#5fd0bf" }}>?</span>
+      <section className="px-5 pt-14 md:px-8 md:pt-20">
+        <div className="mx-auto max-w-5xl">
+          <div className="flex items-baseline justify-between gap-4">
+            <h2 className="display-md">
+              Start here, free<span className="dot">.</span>
             </h2>
-            <p
-              className="mx-auto mt-4 max-w-md text-[0.9375rem] leading-relaxed"
-              style={{ color: "#a9a6a1" }}
-            >
-              We&rsquo;re looking for Filipino VAs to teach what they know. You keep the rights, we
-              handle the hosting.
-            </p>
-            <Link href="/signup" className="btn btn-primary mt-8">
-              Pitch a course
-            </Link>
+            <span className="text-sm" style={{ color: "var(--color-faint)" }}>
+              Basic · no payment
+            </span>
+          </div>
+
+          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {BASIC_COURSES.map((c, i) => (
+              <CourseCard key={c.slug} c={c} i={i} paid={paid} />
+            ))}
           </div>
         </div>
       </section>
 
-      <Footer />
+      <section className="px-5 pt-20 md:px-8 md:pt-28">
+        <div className="mx-auto max-w-5xl">
+          <div className="flex items-baseline justify-between gap-4">
+            <h2 className="display-md">
+              One track per niche<span className="dot">.</span>
+            </h2>
+            <span className="text-sm" style={{ color: "var(--color-faint)" }}>
+              {paid ? "Open on your plan" : "Premium"}
+            </span>
+          </div>
+          <p className="lede mt-4 max-w-xl">
+            Every niche in the cover letter builder gets its own track, written the same way: tools, walkthroughs,
+            a practice project and real listings pulled apart line by line.
+            {paid ? "" : " They open with Pro."}
+          </p>
+          {paid ? null : (
+            <Link href="/pricing" className="btn btn-primary mt-6">
+              Unlock all {PREMIUM_COURSES.length} tracks
+            </Link>
+          )}
+
+          <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+            {PREMIUM_COURSES.map((c, i) => (
+              <CourseCard key={c.slug} c={c} i={i} paid={paid} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {SOON_COURSES.length > 0 && (
+        <section className="px-5 pt-20 md:px-8 md:pt-28">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="display-md">
+              Still being written<span className="dot">.</span>
+            </h2>
+            <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {SOON_COURSES.map((c, i) => (
+                <CourseCard key={c.slug} c={c} i={i} paid={paid} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="px-5 pt-20 md:px-8 md:pt-28">
+        <div className="mx-auto max-w-3xl">
+          <div className="rounded-[28px] px-7 py-12 text-center md:px-14" style={{ background: "var(--color-ink)" }}>
+            <h2 className="display-md" style={{ color: "#fff" }}>
+              Taught a VA skill before
+              <span style={{ color: "#5fd0bf" }}>?</span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-md text-[0.9375rem] leading-relaxed" style={{ color: "#a9a6a1" }}>
+              We&rsquo;re looking for Filipino VAs to teach what they know. You keep the rights and 90% of the
+              sales, we handle the hosting.
+            </p>
+            <a href={CREATOR_MAILTO} className="btn btn-primary mt-8">
+              Apply to become a Creator
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <Footer tagline="Real skills. No fluff" />
     </div>
   );
 }

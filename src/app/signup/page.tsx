@@ -6,9 +6,9 @@ import AuthForm from "@/components/AuthForm";
 export default function Signup() {
   return (
     <AuthShell
-      eyebrow="Free forever"
+      eyebrow="Free to start"
       title="Create your account"
-      sub="Takes about a minute. No card, no placement fee, ever."
+      sub="Takes about a minute. No card to sign up, and no placement fee, ever."
       aside={{
         heading: "What you unlock",
         points: [

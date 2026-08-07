@@ -13,6 +13,7 @@ import {
   readFollowUpDays,
   subscribeApps,
 } from "@/lib/followups";
+import { usePreferences } from "@/lib/usePreferences";
 
 /** A cheap, referentially stable snapshot of the two keys we care about.
  *  useSyncExternalStore re-reads this on every subscription event, so it has to
@@ -66,6 +67,7 @@ export default function FollowUpBell({
   const wrapRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  const { inAppNotifications } = usePreferences();
   const raw = useSyncExternalStore(subscribeApps, snapshot, serverSnapshot);
   const { days, list } = useMemo(() => {
     if (raw === null) return { days: DEFAULT_DAYS, list: [] };
@@ -108,11 +110,16 @@ export default function FollowUpBell({
     if (open) panelRef.current?.focus();
   }, [open]);
 
-  const shown = open && !forceClosed;
+  const shown = open && !forceClosed && inAppNotifications;
   const count = list.length;
   const label = count
     ? `Follow-ups, ${count} waiting`
     : "Follow-ups, nothing waiting";
+
+  // Notifications off: the header goes quiet entirely. The tracker still flags
+  // stale applications, so nothing is actually lost. Placed after every hook so
+  // the order stays stable when the preference flips.
+  if (!inAppNotifications) return null;
 
   return (
     <div ref={wrapRef} className={`relative ${className}`}>

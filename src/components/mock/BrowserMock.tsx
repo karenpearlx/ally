@@ -142,7 +142,9 @@ export default function BrowserMock() {
           <strong className="font-semibold">120 new listings</strong> pulled in the last hour
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-3">
+        {/* 2 columns inside a 390px phone leaves ~75px for a title, which forces
+            mid-word breaks like "SEO / Cont / ent / Man". Single column until sm. */}
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {JOBS.map((j) => (
             <JobCardMini key={j.title} job={j} />
           ))}

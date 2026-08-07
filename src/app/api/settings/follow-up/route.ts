@@ -1,16 +1,10 @@
-import { ApiError, apiError, readJson, requireUser } from '@/lib/api';
+import { ApiError, apiError, readJson, requireActiveUser, requireUser } from '@/lib/api';
 
 function parseDays(value: unknown) {
   if (typeof value !== 'number' || !Number.isInteger(value) || value < 1 || value > 90) {
     throw new ApiError(400, 'follow_up_days must be a whole number from 1 to 90.');
   }
   return value;
-}
-
-function dateAfter(isoDate: string, days: number) {
-  const date = new Date(isoDate);
-  date.setUTCDate(date.getUTCDate() + days);
-  return date.toISOString().slice(0, 10);
 }
 
 export async function GET() {
@@ -30,7 +24,7 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   try {
-    const { supabase, user } = await requireUser();
+    const { supabase, user } = await requireActiveUser();
     const body = await readJson(request);
     const followUpDays = parseDays(body.follow_up_days);
 
@@ -44,23 +38,12 @@ export async function PATCH(request: Request) {
 
     let updatedApplications = 0;
     if (body.recalculate_existing !== false) {
-      const { data: pending, error: pendingError } = await supabase
-        .from('applications')
-        .select('id,created_at')
-        .eq('user_id', user.id)
-        .in('status', ['applied', 'follow_up']);
-      if (pendingError) throw pendingError;
-
-      const results = await Promise.all((pending ?? []).map((application) =>
-        supabase
-          .from('applications')
-          .update({ follow_up_date: dateAfter(application.created_at, followUpDays) })
-          .eq('id', application.id)
-          .eq('user_id', user.id)
-      ));
-      const failed = results.find((result) => result.error);
-      if (failed?.error) throw failed.error;
-      updatedApplications = results.length;
+      const { data: affected, error: recalculateError } = await supabase.rpc(
+        'recalculate_application_follow_ups',
+        { days_to_wait: followUpDays },
+      );
+      if (recalculateError) throw recalculateError;
+      updatedApplications = Number(affected ?? 0);
     }
 
     return Response.json({ ...data, updated_applications: updatedApplications });

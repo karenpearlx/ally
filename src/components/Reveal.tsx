@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { onReveal } from "@/lib/reveal";
 
 export default function Reveal({
   children,
@@ -17,24 +18,7 @@ export default function Reveal({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-
-    // If IntersectionObserver is unavailable, never leave content invisible.
-    if (typeof IntersectionObserver === "undefined") {
-      setShown(true);
-      return;
-    }
-
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (e.isIntersecting) {
-          setShown(true);
-          io.disconnect();
-        }
-      },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.05 }
-    );
-    io.observe(el);
-    return () => io.disconnect();
+    return onReveal(el, () => setShown(true));
   }, []);
 
   return (

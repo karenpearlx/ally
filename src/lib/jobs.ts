@@ -1,10 +1,18 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient as createPublicClient } from '@supabase/supabase-js';
+import { createClient } from '@/lib/supabase/client';
 
-export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://pkacgjvfzlhmxucrjfob.supabase.co',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrYWNnanZmemxobXh1Y3JqZm9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU3MzgwNTMsImV4cCI6MjEwMTMxNDA1M30.QBgZNcxTJMSxkiYwmjuzAMD8xHR-i3mS_2uZbsZfMTg'
-);
+// Use Versified's single browser client so RLS can grant paid accounts the 24-hour
+// early-access window without a second auth client racing the session refresh.
+//
+// Created lazily: this module is also imported by the server-rendered homepage
+// (countActiveJobs), and the browser client touches document.cookie the moment
+// it is constructed.
+let browserClient: ReturnType<typeof createClient> | null = null;
+
+function jobsClient() {
+  browserClient ??= createClient();
+  return browserClient;
+}
 
 export interface Job {
   id: string;
@@ -54,7 +62,7 @@ export async function fetchJobs(): Promise<Job[]> {
   const all: Job[] = [];
 
   for (let page = 0; page < 10; page++) {
-    const { data, error } = await supabase
+    const { data, error } = await jobsClient()
       .from('jobs')
       .select(
         'id,title,company,salary_min,salary_max,salary_currency,salary_type,skills,experience_level,source,original_url,location,is_remote,posted_at,scraped_at'
@@ -71,6 +79,25 @@ export async function fetchJobs(): Promise<Job[]> {
 
   // posted_at is null for every OLJ row, so fall back to scraped_at
   return all.sort((a, b) => jobDate(b) - jobDate(a));
+}
+
+/**
+ * The full description for one listing.
+ *
+ * Deliberately not part of fetchJobs: descriptions are the largest column by a
+ * wide margin and the board renders 700+ rows, so pulling them for every card
+ * would multiply the payload for text nobody reads until they click. Fetched
+ * on demand instead, when someone actually asks for a letter.
+ */
+export async function fetchJobDescription(id: string): Promise<string> {
+  const { data, error } = await jobsClient()
+    .from('jobs')
+    .select('description')
+    .eq('id', id)
+    .maybeSingle();
+  if (error) throw error;
+  const description = (data as { description?: string | null } | null)?.description;
+  return typeof description === 'string' ? description : '';
 }
 
 export function jobDate(job: Job) {
@@ -111,4 +138,44 @@ export function formatPostedAt(job: Job) {
   if (days === 1) return 'Yesterday';
   if (days < 7) return `${days}d ago`;
   return then.toLocaleDateString();
+}
+
+/**
+ * Round a raw total down to a friendly threshold so the homepage stat never
+ * looks like a fake-precise vanity metric, and never *overstates* the board.
+ * Always rounds DOWN, so the claim is true at the moment it renders.
+ *
+ *   704  -> "700+"      (nearest hundred below 1,000)
+ *   1940 -> "1,000+"    (nearest thousand at/above 1,000)
+ *   2000 -> "2,000+"
+ *   62   -> "62"        (too small to dress up)
+ */
+export function formatJobCount(n: number): string {
+  if (!Number.isFinite(n) || n <= 0) return '0';
+  // Always round down to nearest 100
+  const rounded = Math.floor(n / 100) * 100;
+  return `${rounded.toLocaleString('en-US')}+`;
+}
+
+/**
+ * Live count of active listings, for the homepage stat.
+ * `head: true` means Postgres returns the count only — no rows over the wire.
+ */
+export async function countActiveJobs(): Promise<number | null> {
+  try {
+    const supabase = createPublicClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { auth: { persistSession: false, autoRefreshToken: false } },
+    );
+    const { count, error } = await supabase
+      .from('jobs')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_active', true);
+    if (error) return null;
+    return count ?? null;
+  } catch {
+    // Never let a stat lookup take down the homepage build or render.
+    return null;
+  }
 }

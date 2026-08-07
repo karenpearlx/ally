@@ -1,0 +1,733 @@
+/* ============================================================
+   ALLY — admin skin
+   Same paper, ink and teal as the public site, but tuned like a
+   ledger: hairlines instead of pillowy cards, tabular numerals,
+   dense rows, and a blueprint grid under everything.
+   Scoped to /admin so nothing here can leak into public pages.
+   ============================================================ */
+
+.ad {
+  --ad-rail: 244px;
+  --ad-warn: #b5581f;
+  --ad-warn-soft: #fdf1e8;
+  --ad-bad: #b03f3a;
+  --ad-bad-soft: #fbeceb;
+  --ad-good: var(--color-accent);
+  --ad-grid: rgba(33, 32, 30, 0.045);
+
+  min-height: 100dvh;
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  /* Same teal wash the public site uses, sitting under the blueprint grid so
+     the console reads as part of Ally rather than a bolted-on tool. Painted
+     here instead of via <GradientBg> because the grid has to sit on top of it,
+     and two stacked fixed layers would fight over the scroll. */
+  background-image:
+    linear-gradient(var(--ad-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ad-grid) 1px, transparent 1px),
+    radial-gradient(ellipse 90% 45% at 50% 0%, rgba(13, 155, 138, 0.16), transparent 70%);
+  background-size: 28px 28px, 28px 28px, 100% 620px;
+  background-position: -1px -1px, -1px -1px, 50% 0;
+  background-repeat: repeat, repeat, no-repeat;
+  background-attachment: scroll, scroll, fixed;
+}
+
+.ad-num {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+/* ---------- micro type ---------- */
+
+.ad-micro {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+
+.ad-mono {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.8125rem;
+}
+
+/* ---------- shell ---------- */
+
+.ad-shell {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px) {
+  .ad-shell {
+    grid-template-columns: var(--ad-rail) minmax(0, 1fr);
+  }
+  .ad-railwrap {
+    display: flex;
+  }
+}
+
+/* The rail is desktop-only. This used to lean on Tailwind's `hidden lg:flex`
+   in the markup, but admin.css loads after the utilities and `display: flex`
+   here quietly won, so every phone was rendering a 244px sidebar on top of the
+   page. Owning the breakpoint in the same rule that sets display fixes it for
+   good. */
+.ad-railwrap {
+  display: none;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100dvh;
+  border-right: 1px solid var(--color-line);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(8px);
+  padding: 1.5rem 1rem 1rem;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.ad-railitem {
+  display: flex;
+  align-items: baseline;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.5625rem 0.75rem;
+  border-radius: 10px;
+  text-align: left;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--color-ink-2);
+  cursor: pointer;
+  transition: background 0.16s ease, color 0.16s ease;
+}
+.ad-railitem:hover {
+  background: var(--color-paper-2);
+  color: var(--color-ink);
+}
+.ad-railitem[aria-current="true"] {
+  background: var(--color-ink);
+  color: #fff;
+}
+.ad-railitem[aria-current="true"] .ad-railidx {
+  color: rgba(255, 255, 255, 0.55);
+}
+.ad-railidx {
+  font-family: var(--display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-faint);
+  font-variant-numeric: tabular-nums;
+}
+
+/* mobile section strip */
+.ad-strip {
+  display: flex;
+  gap: 0.375rem;
+  overflow-x: auto;
+  padding: 0.5rem 1.25rem 0.75rem;
+  border-bottom: 1px solid var(--color-line);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+/* ---------- panels ---------- */
+
+.ad-panel {
+  /* Same reason as .ad-scroll: panels sit in grid tracks and must be
+     allowed to be narrower than their widest child. */
+  min-width: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  box-shadow: 0 1px 2px rgba(28, 26, 23, 0.03);
+}
+
+.ad-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.875rem 1.125rem;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.ad-panel-title {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  letter-spacing: -0.012em;
+}
+
+/* ---------- stat strip ---------- */
+
+.ad-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+@media (min-width: 720px) {
+  .ad-stats[data-cols="4"] {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .ad-stats[data-cols="5"] {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+  .ad-stats[data-cols="3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.ad-stat {
+  padding: 1rem 1.125rem 1.125rem;
+  border-top: 1px solid var(--color-line);
+  border-left: 1px solid var(--color-line);
+  min-width: 0;
+}
+.ad-stat:nth-child(-n + 2) {
+  border-top: 0;
+}
+.ad-stat:nth-child(2n + 1) {
+  border-left: 0;
+}
+@media (min-width: 720px) {
+  .ad-stat {
+    border-top: 0;
+    border-left: 1px solid var(--color-line);
+  }
+  .ad-stat:first-child {
+    border-left: 0;
+  }
+  .ad-stats[data-cols="4"] .ad-stat:nth-child(4n + 1),
+  .ad-stats[data-cols="5"] .ad-stat:nth-child(5n + 1),
+  .ad-stats[data-cols="3"] .ad-stat:nth-child(3n + 1) {
+    border-left: 0;
+  }
+}
+
+.ad-statvalue {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(1.625rem, 3.4vw, 2.25rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.ad-statvalue[data-empty="true"] {
+  color: var(--color-faint);
+}
+
+/* ---------- tables ---------- */
+
+.ad-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.ad-table th {
+  text-align: left;
+  padding: 0.625rem 1.125rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+  border-bottom: 1px solid var(--color-line);
+  white-space: nowrap;
+}
+.ad-table td {
+  padding: 0.6875rem 1.125rem;
+  border-bottom: 1px solid var(--color-line);
+  color: var(--color-ink-2);
+  vertical-align: top;
+}
+.ad-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+.ad-table tbody tr:hover td {
+  background: #fbfaf9;
+}
+.ad-right {
+  text-align: right;
+  font-variant-numeric: tabular-nums lining-nums;
+  white-space: nowrap;
+}
+
+.ad-scroll {
+  overflow-x: auto;
+  /* A grid or flex item defaults to min-width:auto, so without this the
+     scroller refuses to shrink and widens the whole page instead of
+     scrolling itself. That was the intermittent mobile overflow. */
+  min-width: 0;
+}
+
+/* ---------- bits ---------- */
+
+.ad-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.1875rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid var(--color-line-2);
+  background: var(--color-paper);
+  color: var(--color-ink-2);
+  white-space: nowrap;
+}
+.ad-tag[data-tone="good"] {
+  border-color: rgba(13, 155, 138, 0.3);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-deep);
+}
+.ad-tag[data-tone="warn"] {
+  border-color: rgba(181, 88, 31, 0.28);
+  background: var(--ad-warn-soft);
+  color: var(--ad-warn);
+}
+.ad-tag[data-tone="bad"] {
+  border-color: rgba(176, 63, 58, 0.28);
+  background: var(--ad-bad-soft);
+  color: var(--ad-bad);
+}
+
+.ad-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+  flex: none;
+}
+
+.ad-note {
+  border: 1px dashed var(--color-line-2);
+  border-radius: 12px;
+  padding: 1rem 1.125rem;
+  background: #fdfcfb;
+  color: var(--color-ink-2);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+.ad-note[data-tone="warn"] {
+  border-color: rgba(181, 88, 31, 0.35);
+  background: var(--ad-warn-soft);
+}
+
+.ad-pre {
+  margin-top: 0.75rem;
+  padding: 0.75rem 0.875rem;
+  border-radius: 10px;
+  background: #1d1c1a;
+  color: #e9e6e1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+}
+
+.ad-log {
+  margin: 0;
+  padding: 0.875rem 1.125rem;
+  max-height: 260px;
+  overflow: auto;
+  background: #1d1c1a;
+  color: #ddd8d1;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  border-radius: 0 0 13px 13px;
+}
+
+.ad-skel {
+  border-radius: 8px;
+  background: linear-gradient(90deg, #efedea 25%, #f7f6f4 50%, #efedea 75%);
+  background-size: 240% 100%;
+  animation: ad-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes ad-shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -40% 0;
+  }
+}
+
+.ad-fade {
+  animation: ad-fade 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes ad-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- controls ---------- */
+
+.ad-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4375rem;
+  border-radius: 9px;
+  border: 1px solid var(--color-line-2);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  padding: 0.5rem 0.8125rem;
+  min-height: 36px;
+  cursor: pointer;
+  transition: border-color 0.16s ease, background 0.16s ease, color 0.16s ease;
+}
+.ad-btn:hover:not(:disabled) {
+  border-color: var(--color-ink);
+}
+.ad-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.ad-btn[data-variant="primary"] {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+}
+.ad-btn[data-variant="primary"]:hover:not(:disabled) {
+  background: var(--color-accent-deep);
+  border-color: var(--color-accent-deep);
+}
+.ad-btn[data-variant="danger"] {
+  color: var(--ad-bad);
+  border-color: rgba(176, 63, 58, 0.35);
+}
+.ad-btn[data-variant="danger"]:hover:not(:disabled) {
+  background: var(--ad-bad-soft);
+  border-color: var(--ad-bad);
+}
+
+.ad-input,
+.ad-textarea,
+.ad-select {
+  width: 100%;
+  border: 1px solid var(--color-line-2);
+  border-radius: 10px;
+  background: var(--color-surface);
+  padding: 0.5625rem 0.75rem;
+  font-size: 0.9375rem;
+  color: var(--color-ink);
+  font-family: inherit;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease;
+}
+.ad-textarea {
+  min-height: 140px;
+  resize: vertical;
+  line-height: 1.6;
+}
+.ad-input:focus,
+.ad-textarea:focus,
+.ad-select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.ad-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+  min-height: 44px;
+}
+.ad-track {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--color-line-2);
+  transition: background 0.18s ease;
+  flex: none;
+}
+.ad-track[data-on="true"] {
+  background: var(--color-accent);
+}
+.ad-knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ad-track[data-on="true"] .ad-knob {
+  transform: translateX(18px);
+}
+
+/* ---------- dialog ---------- */
+
+.ad-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(33, 32, 30, 0.4);
+  display: grid;
+  place-items: end center;
+  padding: 0;
+  animation: ad-fadein 0.2s ease both;
+}
+@media (min-width: 640px) {
+  .ad-backdrop {
+    place-items: center;
+    padding: 1.5rem;
+  }
+}
+@keyframes ad-fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.ad-dialog {
+  width: 100%;
+  max-width: 560px;
+  max-height: 90dvh;
+  overflow: auto;
+  background: var(--color-surface);
+  border-radius: 18px 18px 0 0;
+  box-shadow: var(--shadow-float);
+  animation: ad-slideup 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@media (min-width: 640px) {
+  .ad-dialog {
+    border-radius: 16px;
+  }
+}
+@keyframes ad-slideup {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 1023px), (pointer: coarse) {
+  .ad-btn,
+  .ad-input,
+  .ad-select,
+  .ad-textarea,
+  .ad-railitem {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ad-skel,
+  .ad-fade,
+  .ad-dialog,
+  .ad-backdrop {
+    animation: none;
+  }
+}
+
+
+/* ---------- search field ---------- */
+
+.ad-search {
+  flex: 1 1 16rem;
+  max-width: 24rem;
+  min-width: 0;
+}
+.ad-search .ad-input {
+  padding-block: 0.4375rem;
+  font-size: 0.875rem;
+}
+
+/* ---------- live run indicator ---------- */
+
+.ad-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ad-warn);
+}
+.ad-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: currentColor;
+  flex: none;
+  animation: ad-pulse 1.6s ease-in-out infinite;
+}
+@keyframes ad-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.72); }
+}
+
+/* ---------- health checklist ---------- */
+
+.ad-checks {
+  display: grid;
+  gap: 0.125rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+.ad-checks li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--color-line);
+}
+.ad-checks li:last-child {
+  border-bottom: 0;
+}
+.ad-checkdot {
+  width: 9px;
+  height: 9px;
+  margin-top: 0.4375rem;
+  border-radius: 999px;
+  flex: none;
+  background: var(--color-line-2);
+}
+.ad-checks li[data-status="ok"] .ad-checkdot { background: var(--color-accent); }
+.ad-checks li[data-status="warn"] .ad-checkdot { background: var(--ad-warn); }
+.ad-checks li[data-status="bad"] .ad-checkdot {
+  background: var(--ad-bad);
+  box-shadow: 0 0 0 4px rgba(176, 63, 58, 0.14);
+}
+.ad-checkword {
+  margin-left: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-faint);
+}
+.ad-checks li[data-status="bad"] .ad-checkword { color: var(--ad-bad); }
+.ad-checks li[data-status="warn"] .ad-checkword { color: var(--ad-warn); }
+
+/* ---------- comment feed ---------- */
+
+.ad-feed {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ad-feed li {
+  padding: 0.9375rem 1.125rem;
+  border-bottom: 1px solid var(--color-line);
+}
+.ad-feed li:last-child {
+  border-bottom: 0;
+}
+
+/* ---------- suspended row ---------- */
+
+.ad-table tr[data-suspended="true"] td {
+  background: var(--ad-bad-soft);
+}
+.ad-table tr[data-suspended="true"]:hover td {
+  background: #f8e4e2;
+}
+
+/* ---------- tables become cards on a phone ----------
+   Horizontal scrolling a six-column table on a 390px screen is technically
+   readable and practically useless. Below 640px each row stacks into a
+   labelled card instead, using the data-label already on every cell. */
+
+@media (max-width: 639px) {
+  .ad-stack thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .ad-stack,
+  .ad-stack tbody,
+  .ad-stack tr,
+  .ad-stack td {
+    display: block;
+    width: 100%;
+  }
+  .ad-stack tr {
+    padding: 0.875rem 1.125rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .ad-stack tr:last-child {
+    border-bottom: 0;
+  }
+  .ad-stack td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.25rem 0;
+    border-bottom: 0;
+    text-align: left;
+    /* Analytics rows carry raw page paths and job titles. One long unbroken
+       string used to push the card past the viewport, which showed up as an
+       intermittent ~20px overflow depending on what data happened to be in
+       the table. Break anywhere rather than trust the content. */
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .ad-stack td > * {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .ad-stack td::before {
+    content: attr(data-label);
+    flex: none;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-faint);
+  }
+  /* The first cell is the row's identity, so it gets the full width. */
+  .ad-stack td:first-child {
+    display: block;
+    padding-bottom: 0.5rem;
+    overflow-wrap: anywhere;
+  }
+  .ad-stack td:first-child::before {
+    display: none;
+  }
+  .ad-stack .ad-right {
+    text-align: right;
+  }
+  .ad-stack tbody tr:hover td {
+    background: transparent;
+  }
+  .ad-stack tr[data-suspended="true"] {
+    background: var(--ad-bad-soft);
+  }
+}

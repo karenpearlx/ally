@@ -1,4 +1,5 @@
 import Reveal from "./Reveal";
+import RevealWords from "./RevealWords";
 
 export default function SectionHead({
   eyebrow,
@@ -19,12 +20,13 @@ export default function SectionHead({
       <Reveal>
         <p className="eyebrow">{eyebrow}</p>
       </Reveal>
-      <Reveal delay={80}>
-        <h2 className={`display-lg mt-4 ${centered ? "mx-auto max-w-3xl" : "max-w-2xl"}`}>
-          {title}
-          {dot && <span className="dot">.</span>}
-        </h2>
-      </Reveal>
+      <RevealWords
+        text={title}
+        as="h2"
+        dot={dot}
+        delay={80}
+        className={`display-lg mt-4 ${centered ? "mx-auto max-w-3xl" : "max-w-2xl"}`}
+      />
       {sub && (
         <Reveal delay={140}>
           <p className={`lede mt-5 ${centered ? "mx-auto max-w-xl" : "max-w-xl"}`}>{sub}</p>

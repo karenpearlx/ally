@@ -1,4 +1,4 @@
-import { ApiError, apiError, readJson, requireUser, stringField, urlField, uuidField } from '@/lib/api';
+import { ApiError, apiError, readJson, requireActiveUser, requireUser, stringField, urlField, uuidField } from '@/lib/api';
 
 const STATUSES = ['saved', 'applied', 'follow_up', 'interviewing', 'offer', 'accepted', 'rejected', 'withdrawn'] as const;
 
@@ -37,8 +37,9 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
       .select('*')
       .eq('id', uuidField(id))
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
     if (error) throw error;
+    if (!data) throw new ApiError(404, 'Application not found.');
     return Response.json({ application: data });
   } catch (error) {
     return apiError(error);
@@ -47,7 +48,7 @@ export async function GET(_request: Request, context: { params: Promise<{ id: st
 
 export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const { supabase, user } = await requireUser();
+    const { supabase, user } = await requireActiveUser();
     const { id } = await context.params;
     const patch = editableFields(await readJson(request));
     const { data, error } = await supabase
@@ -56,8 +57,9 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
       .eq('id', uuidField(id))
       .eq('user_id', user.id)
       .select()
-      .single();
+      .maybeSingle();
     if (error) throw error;
+    if (!data) throw new ApiError(404, 'Application not found.');
     return Response.json({ application: data });
   } catch (error) {
     return apiError(error);
@@ -66,14 +68,17 @@ export async function PATCH(request: Request, context: { params: Promise<{ id: s
 
 export async function DELETE(_request: Request, context: { params: Promise<{ id: string }> }) {
   try {
-    const { supabase, user } = await requireUser();
+    const { supabase, user } = await requireActiveUser();
     const { id } = await context.params;
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('applications')
       .delete()
       .eq('id', uuidField(id))
-      .eq('user_id', user.id);
+      .eq('user_id', user.id)
+      .select('id')
+      .maybeSingle();
     if (error) throw error;
+    if (!data) throw new ApiError(404, 'Application not found.');
     return new Response(null, { status: 204 });
   } catch (error) {
     return apiError(error);

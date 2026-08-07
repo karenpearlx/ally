@@ -9,6 +9,8 @@ const COLS = [
       { href: "/tracker", label: "Application tracker" },
       { href: "/cover-letter", label: "Cover letter builder" },
       { href: "/resume", label: "Resume builder" },
+      { href: "/interview-prep", label: "Interview prep" },
+      { href: "/follow-up-email", label: "Follow-up writer" },
       { href: "/pricing-tool", label: "Rate check" },
       { href: "/learn", label: "Learn" },
       { href: "/courses", label: "Courses" },
@@ -17,6 +19,7 @@ const COLS = [
   {
     title: "Company",
     links: [
+      { href: "/pricing", label: "Pricing" },
       { href: "/about", label: "About" },
       { href: "/privacy", label: "Privacy" },
       { href: "/terms", label: "Terms" },
@@ -24,7 +27,11 @@ const COLS = [
   },
 ];
 
-export default function Footer() {
+interface FooterProps {
+  tagline?: string;
+}
+
+export default function Footer({ tagline = "Free to start. No agency in the middle" }: FooterProps) {
   return (
     <footer className="px-5 pb-10 pt-20 md:px-8 md:pt-28">
       <div className="mx-auto max-w-6xl">
@@ -32,7 +39,7 @@ export default function Footer() {
           className="display-md mx-auto mb-16 max-w-2xl text-center md:mb-24"
           style={{ color: "var(--color-ink)" }}
         >
-          Free to use. No agency in the middle<span className="dot">.</span>
+          {tagline}<span className="dot">.</span>
         </p>
 
         <div
@@ -42,7 +49,7 @@ export default function Footer() {
           <div>
             <Wordmark className="tap" size="sm" />
             <p className="mt-3 max-w-xs text-sm leading-relaxed" style={{ color: "var(--color-muted)" }}>
-              Built in Negros for Filipino virtual assistants who are done guessing what
+              Built for Filipino virtual assistants who are done guessing what
               they&rsquo;re worth.
             </p>
           </div>

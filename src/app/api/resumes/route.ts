@@ -1,4 +1,4 @@
-import { ApiError, apiError, jsonObject, readJson, requireUser, stringField } from '@/lib/api';
+import { ApiError, apiError, consumeFeatureUse, jsonObject, paginationFrom, paginationMeta, readJson, requireActiveUser, requireUser, stringField } from '@/lib/api';
 import { RESUME_TEMPLATES } from '@/lib/resume';
 
 function templateName(value: unknown, fallback = 'classic') {
@@ -15,16 +15,23 @@ function resumeContent(value: unknown) {
   return content;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const { supabase, user } = await requireUser();
-    const { data, error } = await supabase
+    const { limit, offset } = paginationFrom(request);
+    const { data, error, count } = await supabase
       .from('resumes')
-      .select('*')
+      .select('id,title,template_name,created_at,updated_at', { count: 'exact' })
       .eq('user_id', user.id)
-      .order('updated_at', { ascending: false });
+      .order('updated_at', { ascending: false })
+      .range(offset, offset + limit - 1);
     if (error) throw error;
-    return Response.json({ resumes: data ?? [], templates: RESUME_TEMPLATES });
+    const resumes = data ?? [];
+    return Response.json({
+      resumes,
+      templates: RESUME_TEMPLATES,
+      pagination: paginationMeta(count, limit, offset, resumes.length),
+    });
   } catch (error) {
     return apiError(error);
   }
@@ -32,14 +39,16 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { supabase, user } = await requireUser();
+    const { supabase, user } = await requireActiveUser();
     const body = await readJson(request);
-    const { data, error } = await supabase.from('resumes').insert({
+    const record = {
       user_id: user.id,
       title: stringField(body.title, 'title', { max: 200 }) ?? 'Untitled resume',
       template_name: templateName(body.template_name),
       content: resumeContent(body.content),
-    }).select().single();
+    };
+    await consumeFeatureUse(supabase, 'resume');
+    const { data, error } = await supabase.from('resumes').insert(record).select().single();
     if (error) throw error;
     return Response.json({ resume: data }, { status: 201 });
   } catch (error) {

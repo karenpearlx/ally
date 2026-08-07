@@ -2,6 +2,8 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
+import StartTrack from "@/components/StartTrack";
+import GradientBg from "@/components/GradientBg";
 
 const TRACKS = [
   {
@@ -68,6 +70,7 @@ const FAQ = [
 export default function Learn() {
   return (
     <div className="min-h-screen">
+      <GradientBg position="right" />
       <Nav />
 
       <section className="px-5 pt-28 md:px-8 md:pt-40">
@@ -82,9 +85,7 @@ export default function Learn() {
           </p>
 
           <div className="mt-9 flex flex-wrap gap-3">
-            <Link href="/signup" className="btn btn-primary">
-              Start track 01
-            </Link>
+            <StartTrack />
             <Link href="/courses" className="btn btn-ghost">
               Browse courses
             </Link>
@@ -129,6 +130,20 @@ export default function Learn() {
                     </li>
                   ))}
                 </ul>
+
+                {i === 0 ? (
+                  <Link
+                    href="/learn/start"
+                    className="tap mt-6 inline-flex items-center gap-2 text-[0.9375rem] font-semibold"
+                    style={{ color: "var(--color-accent)" }}
+                  >
+                    Read track 01 <span aria-hidden>→</span>
+                  </Link>
+                ) : (
+                  <p className="mt-6 text-sm" style={{ color: "var(--color-faint)" }}>
+                    Written next
+                  </p>
+                )}
               </article>
             </Reveal>
           ))}
@@ -158,7 +173,7 @@ export default function Learn() {
         </div>
       </section>
 
-      <Footer />
+      <Footer tagline="Start from zero, get hired anyway" />
     </div>
   );
 }

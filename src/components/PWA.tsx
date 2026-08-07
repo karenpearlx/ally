@@ -163,10 +163,13 @@ function Bar({
   return (
     <div
       role="status"
-      className="fixed inset-x-3 bottom-3 z-[60] mx-auto flex max-w-md items-center gap-3 rounded-2xl px-4 py-3 shadow-lg md:inset-x-auto md:right-6"
+      className="fixed inset-x-3 z-[60] mx-auto flex max-w-md items-center gap-3 rounded-2xl px-4 py-3 shadow-lg md:inset-x-auto md:right-6"
       style={{
         background: 'var(--color-ink)',
         color: '#fff',
+        // Sits above the mobile tab bar when there is one; --ally-bottomnav is
+        // 0px on desktop and on the routes where the bar hides.
+        bottom: 'calc(0.75rem + var(--ally-bottomnav, 0px))',
         paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom))',
       }}
     >

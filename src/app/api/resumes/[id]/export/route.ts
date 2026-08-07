@@ -1,4 +1,4 @@
-import { ApiError, apiError, requireUser, uuidField } from '@/lib/api';
+import { ApiError, apiError, consumeFeatureUse, requireUser, uuidField } from '@/lib/api';
 import { RESUME_TEMPLATES, resumeDocx, resumeHtml, resumePdf, resumeText, type ResumeTemplate } from '@/lib/resume';
 
 const FORMATS = ['json', 'txt', 'html', 'pdf', 'docx'] as const;
@@ -18,8 +18,9 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
 
     const { data: resume, error } = await supabase.from('resumes')
       .select('title,template_name,content')
-      .eq('id', uuidField(id)).eq('user_id', user.id).single();
+      .eq('id', uuidField(id)).eq('user_id', user.id).maybeSingle();
     if (error) throw error;
+    if (!resume) throw new ApiError(404, 'Resume not found.');
     const template = RESUME_TEMPLATES.includes(resume.template_name as ResumeTemplate)
       ? resume.template_name as ResumeTemplate
       : 'classic';
@@ -47,6 +48,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
       extension = 'pdf';
     }
 
+    await consumeFeatureUse(supabase, 'resume');
     return new Response(body, {
       headers: {
         'Content-Type': contentType,

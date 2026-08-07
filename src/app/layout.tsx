@@ -1,10 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/lib/AuthContext";
 import PWA from "@/components/PWA";
+import MobileNav from "@/components/MobileNav";
+import WelcomeModal from "@/components/WelcomeModal";
 
-// Display: a heavy modern serif. Keeps fomo.ph's bold-black-headline weight
-// and tight tracking, but with actual serif character.
+// Display: a heavy modern serif with quirky character.
 const display = Fraunces({
   subsets: ["latin"],
   display: "swap",
@@ -76,8 +78,12 @@ export default function RootLayout({
         <meta charSet="utf-8" />
       </head>
       <body className="antialiased" suppressHydrationWarning>
-        {children}
-        <PWA />
+        <AuthProvider>
+          {children}
+          <MobileNav />
+          <WelcomeModal />
+          <PWA />
+        </AuthProvider>
       </body>
     </html>
   );

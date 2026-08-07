@@ -1,0 +1,41 @@
+import { createServerClient } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
+
+/**
+ * Keeps the Supabase session fresh for the admin area.
+ *
+ * Access tokens expire after an hour. Without a refresh pass, coming back to
+ * /admin the next morning would fail the server-side check and bounce a
+ * perfectly valid session to the login screen. This calls getUser(), which
+ * rotates the tokens, and copies any updated cookies onto the response.
+ *
+ * Scoped to the signed-in surfaces only — /admin, /api/admin, /settings,
+ * /api/settings, /profile and /dashboard — so it cannot affect the public pages.
+ */
+export async function proxy(request: NextRequest) {
+  const response = NextResponse.next({ request });
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return response;
+
+  const supabase = createServerClient(url, key, {
+    cookies: {
+      getAll() {
+        return request.cookies.getAll();
+      },
+      setAll(cookiesToSet) {
+        for (const { name, value, options } of cookiesToSet) {
+          response.cookies.set(name, value, options);
+        }
+      },
+    },
+  });
+
+  await supabase.auth.getUser();
+  return response;
+}
+
+export const config = {
+  matcher: ['/admin/:path*', '/api/admin/:path*', '/settings/:path*', '/api/settings/:path*', '/profile/:path*', '/api/profile/:path*', '/profile', '/dashboard/:path*', '/dashboard'],
+};

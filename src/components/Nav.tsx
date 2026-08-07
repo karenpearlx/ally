@@ -5,18 +5,49 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Wordmark from "./Wordmark";
 import FollowUpBell from "./FollowUpBell";
+import { AccountMenu, AccountSheetBlock } from "./AccountMenu";
+import PreferencesSync from "./PreferencesSync";
+import { useAuth } from "@/lib/AuthContext";
 
-const LINKS = [
+type NavLink = {
+  href: string;
+  label: string;
+  /** Hidden from the desktop bar below 1024px while signed in. */
+  wide?: boolean;
+  /** Hidden below 1024px whether or not you are signed in. */
+  alwaysWide?: boolean;
+};
+
+const DASHBOARD: NavLink = { href: "/dashboard", label: "Dashboard" };
+
+// `wide` links are hidden from the desktop bar below 1024px. Signed in, six
+// links plus the bell and the account menu overflow the 768px header, and a
+// wrapped nav looks broken. Pricing is `alwaysWide` because it is the newest
+// arrival and the least urgent of the six. Nothing becomes unreachable: they
+// all still sit in the mobile sheet, the account menu and the footer.
+const LINKS: NavLink[] = [
   { href: "/jobs", label: "Jobs" },
   { href: "/tracker", label: "Tracker" },
-  { href: "/pricing-tool", label: "Rate check" },
+  { href: "/pricing-tool", label: "Rate check", wide: true },
+  { href: "/interview-prep", label: "Interview", wide: true },
   { href: "/learn", label: "Learn" },
+  { href: "/pricing", label: "Pricing", alwaysWide: true },
 ];
+
 
 export default function Nav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [lifted, setLifted] = useState(false);
+  // One subscription for the whole header; desktop and the sheet share it.
+  const { status, user, ready } = useAuth();
+  // Signed in, this is home: the wordmark and the first nav slot both go there.
+  // While the session is still "unknown" we render the signed-out set, so the
+  // header never shows a private link to someone who turns out to be a visitor.
+  // Only show signed-in nav once auth is ready
+  const signedIn = ready && status === "in" && Boolean(user);
+  const links = signedIn ? [DASHBOARD, ...LINKS] : LINKS;
+  const home = signedIn ? DASHBOARD.href : "/";
 
   useEffect(() => {
     const onScroll = () => setLifted(window.scrollY > 8);
@@ -38,12 +69,19 @@ export default function Nav() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  useEffect(() => {
+  // Close the sheet on navigation. Previous-props state rather than an effect,
+  // so the new route's first paint already has it closed.
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
     setOpen(false);
-  }, [pathname]);
+  }
 
   return (
     <>
+      {/* Account preferences beat whatever this device cached. */}
+      <PreferencesSync user={ready ? user : null} />
+
       <header
         className="fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,backdrop-filter] duration-300"
         style={{
@@ -53,18 +91,20 @@ export default function Nav() {
         }}
       >
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:h-20 md:px-8">
-          <Wordmark />
+          <Wordmark href={home} />
 
           <nav className="hidden items-center gap-1 md:flex">
-            {LINKS.map((l) => {
+            {links.map((l) => {
               const active = pathname === l.href;
               return (
                 <Link
                   key={l.href}
                   href={l.href}
                   aria-current={active ? "page" : undefined}
-                  className="rounded-full px-3.5 py-2 text-[0.9375rem] font-medium transition-colors"
-                  style={{ color: active ? "var(--color-ink)" : "var(--color-muted)" }}
+                  className={`rounded-full px-3.5 py-2 text-[0.9375rem] font-medium transition-colors ${
+                    l.alwaysWide || (signedIn && l.wide) ? "hidden lg:block" : ""
+                  }`}
+                  style={{ color: active ? "var(--color-ink)" : "var(--color-ink)", opacity: active ? 1 : 0.7 }}
                 >
                   {l.label}
                   <span
@@ -77,14 +117,26 @@ export default function Nav() {
                 </Link>
               );
             })}
-            <FollowUpBell className="ml-2" />
-            <Link href="/login" className="btn btn-ink ml-2 !px-5 !py-2.5 !text-sm">
-              Sign in
-            </Link>
+            {signedIn && <FollowUpBell className="ml-2" />}
+            {/* Hold the slot until the session is known, so a signed-in header
+                never flashes "Sign in" on the way in. */}
+            {!ready ? (
+              <span
+                aria-hidden
+                className="ml-2 block h-10 w-[6.5rem] rounded-full"
+                style={{ background: "var(--color-line)", opacity: 0.5 }}
+              />
+            ) : signedIn ? (
+              <AccountMenu user={user!} />
+            ) : (
+              <Link href="/login" className="btn btn-ink ml-2 !px-5 !py-2.5 !text-sm">
+                Sign in
+              </Link>
+            )}
           </nav>
 
           <div className="flex items-center gap-2 md:hidden">
-            <FollowUpBell forceClosed={open} />
+            {signedIn && <FollowUpBell forceClosed={open} />}
             <button
             type="button"
             onClick={() => setOpen((v) => !v)}
@@ -140,7 +192,7 @@ export default function Nav() {
             transition: "transform .28s cubic-bezier(.22,1,.36,1)",
           }}
         >
-          {LINKS.map((l) => (
+          {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
@@ -155,9 +207,19 @@ export default function Nav() {
               </span>
             </Link>
           ))}
-          <Link href="/login" className="btn btn-ink mt-2 w-full !py-3.5 !text-base">
-            Sign in
-          </Link>
+          {!ready ? (
+            <span
+              aria-hidden
+              className="mt-2 block h-[3.25rem] w-full rounded-full"
+              style={{ background: "var(--color-line)", opacity: 0.5 }}
+            />
+          ) : signedIn ? (
+            <AccountSheetBlock user={user!} onDismiss={() => setOpen(false)} />
+          ) : (
+            <Link href="/login" className="btn btn-ink mt-2 w-full !py-3.5 !text-base">
+              Sign in
+            </Link>
+          )}
         </div>
       </div>
     </>

@@ -3,21 +3,22 @@ import { createClient } from '@/lib/supabase/server';
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
+  const publicOrigin = process.env.NEXT_PUBLIC_APP_URL ?? url.origin;
   const code = url.searchParams.get('code');
   const requestedNext = url.searchParams.get('next');
   const next = requestedNext?.startsWith('/') && !requestedNext.startsWith('//') ? requestedNext : '/tracker';
 
   if (!code) {
-    return NextResponse.redirect(new URL('/login?error=Missing+authentication+code', url.origin));
+    return NextResponse.redirect(new URL('/login?error=Missing+authentication+code', publicOrigin));
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.exchangeCodeForSession(code);
   if (error) {
-    const destination = new URL('/login', url.origin);
+    const destination = new URL('/login', publicOrigin);
     destination.searchParams.set('error', error.message);
     return NextResponse.redirect(destination);
   }
 
-  return NextResponse.redirect(new URL(next, url.origin));
+  return NextResponse.redirect(new URL(next, publicOrigin));
 }

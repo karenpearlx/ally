@@ -33,7 +33,12 @@ function Spinner() {
 export default function AuthForm({ mode }: { mode: Mode }) {
   const router = useRouter();
   // /auth/callback bounces failures back here as ?error=…
-  const callbackError = useSearchParams().get("error");
+  const params = useSearchParams();
+  const callbackError = params.get("error");
+  // Where the user was headed before we bounced them here (e.g. /settings).
+  // Same-origin paths only — an open redirect is not a feature.
+  const requestedNext = params.get("next");
+  const next = requestedNext?.startsWith("/") && !requestedNext.startsWith("//") ? requestedNext : "/tracker";
   const isSignup = mode === "signup";
 
   const [fullName, setFullName] = useState("");
@@ -70,7 +75,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
 
         // Supabase returns a user with no session when email confirmation is on.
         if (data.session) {
-          router.push("/tracker");
+          router.push(next);
           router.refresh();
           return;
         }
@@ -81,7 +86,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
       } else {
         const { error: err } = await supabase.auth.signInWithPassword({ email, password });
         if (err) throw err;
-        router.push("/tracker");
+        router.push(next);
         router.refresh();
       }
     } catch (err) {
@@ -99,7 +104,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
       const supabase = createClient();
       const { error: err } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${location.origin}/auth/callback` },
+        options: { redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}` },
       });
       if (err) throw err;
       // On success the browser leaves for Google; keep the spinner until it does.
@@ -173,7 +178,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
               Keep me signed in
             </label>
             <Link
-              href="/login"
+              href="/forgot-password"
               className="-my-2 inline-flex min-h-[44px] items-center py-2 text-sm underline underline-offset-4"
               style={{ color: "var(--color-muted)" }}
             >

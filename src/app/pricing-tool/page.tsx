@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Nav from '@/components/Nav';
+import GradientBg from '@/components/GradientBg';
 import Footer from '@/components/Footer';
 
 const SKILLS = [
@@ -109,6 +110,7 @@ export default function PricingTool() {
 
   return (
     <div className="min-h-screen">
+      <GradientBg position="left" />
       <Nav />
 
       <section className="px-5 pt-28 md:px-8 md:pt-40">
@@ -365,7 +367,7 @@ export default function PricingTool() {
         </div>
       </section>
 
-      <Footer />
+      <Footer tagline="Know your worth before you quote" />
     </div>
   );
 }

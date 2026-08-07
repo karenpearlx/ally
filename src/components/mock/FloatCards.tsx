@@ -12,7 +12,9 @@ const GRID = [
 
 const SHADE = ["#eeecea", "#c3e6df", "#6cc7b8", "#0d9b8a"];
 
-export default function FloatCards() {
+/** `tracked` comes from the live job count so this can never contradict the
+ *  stats strip above it. It used to be a second hardcoded "1,940". */
+export default function FloatCards({ tracked = "Live" }: { tracked?: string }) {
   return (
     <div className="relative mx-auto grid max-w-5xl gap-6 md:grid-cols-2 md:gap-0">
       {/* left card */}
@@ -94,7 +96,7 @@ export default function FloatCards() {
         <h3 className="font-display text-lg font-extrabold tracking-tight">Where the demand is</h3>
         <p className="mt-1.5 text-sm leading-relaxed" style={{ color: "var(--color-muted)" }}>
           Live map of listings by <strong style={{ color: "var(--color-ink-2)" }}>skill</strong> and
-          pay band, rebuilt every 30 minutes.
+          pay band, rebuilt regularly.
         </p>
 
         <div className="mt-6">
@@ -151,7 +153,7 @@ export default function FloatCards() {
             />
             Most listings
           </span>
-          <span className="font-medium">1,940 tracked</span>
+          <span className="font-medium">{tracked} tracked</span>
         </div>
 
         <p className="mt-4 text-sm leading-relaxed" style={{ color: "var(--color-ink-2)" }}>

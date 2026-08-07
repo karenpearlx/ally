@@ -1,5 +1,9 @@
 import Link from "next/link";
 import Nav from "@/components/Nav";
+import RevealWords from "@/components/RevealWords";
+import StatsStrip, { type Stat } from "@/components/StatsStrip";
+import PointerCard from "@/components/PointerCard";
+import { countActiveJobs, formatJobCount } from "@/lib/jobs";
 import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import SectionHead from "@/components/SectionHead";
@@ -8,13 +12,12 @@ import PhoneMock from "@/components/mock/PhoneMock";
 import FloatCards from "@/components/mock/FloatCards";
 import ToolkitCards from "@/components/mock/ToolkitCards";
 import TrackerMock from "@/components/mock/TrackerMock";
-
-const STATS = [
-  { n: "1,940", l: "listings tracked" },
-  { n: "30 min", l: "refresh cycle" },
-  { n: "3", l: "job sources merged" },
-  { n: "₱0", l: "to use it" },
-];
+import GradientBg from "@/components/GradientBg";
+import Compare from "@/components/home/Compare";
+import Steps from "@/components/home/Steps";
+import Testimonials from "@/components/home/Testimonials";
+import Faq from "@/components/home/Faq";
+import HomeContent from "@/components/home/HomeContent";
 
 const LEARN = [
   {
@@ -34,11 +37,24 @@ const LEARN = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const jobCount = await countActiveJobs();
+  const trackedLabel = jobCount ? formatJobCount(jobCount) : "Live";
+
+  const STATS: Stat[] = [
+    jobCount
+      ? { display: trackedLabel, to: Math.floor(jobCount / 100) * 100, suffix: "+", label: "listings tracked" }
+      : { display: "Live", label: "listings tracked" },
+    { display: "3", to: 3, label: "job sources merged" },
+    { display: "FREE", label: "to use it" },
+  ];
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
+      <GradientBg position="center" />
       <Nav />
 
+      <HomeContent>
       {/* ── HERO ───────────────────────────────────────────── */}
       <section className="px-5 pb-4 pt-28 md:px-8 md:pt-40">
         <div className="mx-auto max-w-6xl">
@@ -46,14 +62,19 @@ export default function Home() {
             Now live for Filipino VAs
           </p>
 
-          <h1 className="display-xl rise mt-5 max-w-4xl" style={{ animationDelay: "140ms" }}>
-            Every VA job. One place<span className="dot">.</span>
-          </h1>
+          <RevealWords
+            text="Your VA career, all in one place"
+            as="h1"
+            className="display-xl mt-5 max-w-4xl"
+            dot
+            immediate
+            delay={140}
+            stagger={62}
+          />
 
           <div className="rise mt-8" style={{ animationDelay: "230ms" }}>
             <p className="lede max-w-lg">
-              Versified pulls remote listings from OnlineJobs.ph, RemoteOK and Upwork into one board,
-              tells you what the work is really paying, and teaches you the rest.
+              Find jobs, learn the skills, know your worth. Everything a VA needs - beginner or pro - in one place.
             </p>
 
             <div className="mt-9 flex flex-wrap gap-3">
@@ -95,22 +116,36 @@ export default function Home() {
       <section className="px-5 pt-24 md:px-8 md:pt-32">
         <div className="mx-auto max-w-5xl">
           <Reveal>
-            <div
-              className="grid grid-cols-2 gap-y-8 border-y py-9 md:grid-cols-4"
-              style={{ borderColor: "var(--color-line-2)" }}
-            >
-              {STATS.map((s) => (
-                <div key={s.l} className="px-2 text-center">
-                  <p className="font-display text-2xl font-extrabold tracking-tight md:text-3xl">
-                    {s.n}
-                  </p>
-                  <p className="mt-1 text-[0.8125rem]" style={{ color: "var(--color-muted)" }}>
-                    {s.l}
-                  </p>
-                </div>
-              ))}
-            </div>
+            <StatsStrip stats={STATS} />
           </Reveal>
+        </div>
+      </section>
+
+      {/* ── OLD WAY VS ALLY ────────────────────────────────── */}
+      <section className="px-5 pt-24 md:px-8 md:pt-36">
+        <div className="mx-auto max-w-6xl">
+          <SectionHead
+            eyebrow="The difference"
+            title="Job hunting, minus the admin"
+            sub="Nothing here is new work. It is the same job hunt you are already doing, with the tedious half taken off your plate."
+          />
+          <div className="mt-14 md:mt-20">
+            <Compare jobs={jobCount ? trackedLabel : undefined} />
+          </div>
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ───────────────────────────────────── */}
+      <section className="px-5 pt-28 md:px-8 md:pt-40">
+        <div className="mx-auto max-w-6xl">
+          <SectionHead
+            eyebrow="How it works"
+            title="Three steps, one evening"
+            sub="No onboarding call, no setup wizard. Open the feed and you are already on step one."
+          />
+          <div className="mt-14 md:mt-20">
+            <Steps />
+          </div>
         </div>
       </section>
 
@@ -137,7 +172,7 @@ export default function Home() {
             sub="One search across three platforms, deduped and sorted. Tap through to apply on the original site — Versified never sits between you and the client."
           />
           <Reveal delay={100} className="mt-14 md:mt-24">
-            <FloatCards />
+            <FloatCards tracked={trackedLabel} />
           </Reveal>
         </div>
       </section>
@@ -179,9 +214,9 @@ export default function Home() {
           <div className="mt-14 grid gap-5 md:mt-20 md:grid-cols-3">
             {LEARN.map((c, i) => (
               <Reveal key={c.k} delay={i * 90}>
-                <article className="card h-full p-7 md:p-8">
+                <PointerCard as="article" className="card lift h-full p-7 md:p-8">
                   <p
-                    className="font-display text-sm font-extrabold tracking-[0.1em]"
+                    className="card-index font-display text-sm font-extrabold tracking-[0.1em]"
                     style={{ color: "var(--color-accent)" }}
                   >
                     {c.k}
@@ -190,7 +225,7 @@ export default function Home() {
                   <p className="mt-3 text-[0.9375rem] leading-relaxed" style={{ color: "var(--color-muted)" }}>
                     {c.d}
                   </p>
-                </article>
+                </PointerCard>
               </Reveal>
             ))}
           </div>
@@ -205,6 +240,34 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── TESTIMONIALS ───────────────────────────────────── */}
+      <section className="px-5 pt-28 md:px-8 md:pt-40">
+        <div className="mx-auto max-w-6xl">
+          <SectionHead
+            eyebrow="What VAs say"
+            title="Coming from real people"
+            sub="Versified launched recently. This section fills up with actual users, or it stays empty."
+          />
+          <div className="mt-14 md:mt-20">
+            <Testimonials />
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ────────────────────────────────────────────── */}
+      <section className="px-5 pt-28 md:px-8 md:pt-40">
+        <div className="mx-auto max-w-6xl">
+          <SectionHead
+            eyebrow="Questions"
+            title="The things everyone asks"
+            sub="Straight answers. If something is not built yet, it says so."
+          />
+          <div className="mt-14 md:mt-20">
+            <Faq />
+          </div>
+        </div>
+      </section>
+
       {/* ── CTA ────────────────────────────────────────────── */}
       <section className="px-5 pt-28 md:px-8 md:pt-40">
         <div className="mx-auto max-w-4xl">
@@ -214,7 +277,7 @@ export default function Home() {
               style={{ background: "var(--color-ink)" }}
             >
               <p className="eyebrow" style={{ color: "#5fd0bf" }}>
-                Free forever
+                Free to start
               </p>
               <h2 className="display-lg mt-4" style={{ color: "#fff" }}>
                 Know your worth, then go get it
@@ -242,6 +305,7 @@ export default function Home() {
       </section>
 
       <Footer />
+      </HomeContent>
     </div>
   );
 }

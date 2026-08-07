@@ -1,8 +1,17 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 import Nav from '@/components/Nav';
+import GradientBg from '@/components/GradientBg';
 import Footer from '@/components/Footer';
+import { RESUME_BUILDER_TEMPLATES, type ResumeBuilderTemplateId } from '@/lib/resume-builder-templates';
+import Link from 'next/link';
+import { usePreferences } from '@/lib/usePreferences';
+import { useAuth, displayName } from '@/lib/AuthContext';
+import { createClient } from '@/lib/supabase/client';
+import { useSubscription } from '@/lib/useSubscription';
+import { FREE_RESUME_LIMIT } from '@/lib/subscription';
 
 type Job = { id: string; role: string; company: string; period: string; bullets: string };
 type Data = {
@@ -16,12 +25,8 @@ type Data = {
   jobs: Job[];
 };
 
-const TEMPLATES = [
-  { id: 'clean', name: 'Clean', note: 'Safest for ATS. What most clients expect.' },
-  { id: 'bold', name: 'Bold', note: 'Teal header bar. Stands out in a stack of PDFs.' },
-  { id: 'classic', name: 'Classic', note: 'Serif and centred. Formal, corporate-friendly.' },
-] as const;
-type TemplateId = (typeof TEMPLATES)[number]['id'];
+const TEMPLATES = RESUME_BUILDER_TEMPLATES;
+type TemplateId = ResumeBuilderTemplateId;
 
 const STORE = 'ally-resume';
 
@@ -55,8 +60,19 @@ const DEFAULTS: Data = {
   ],
 };
 
+/** True when a field is empty or still holding the sample value. */
+function isPlaceholder(value: string, sample: string) {
+  const clean = value.trim();
+  return !clean || clean === sample;
+}
+
 export default function Resume() {
-  const [tpl, setTpl] = useState<TemplateId>('clean');
+  const { resumeTemplate, hydrated: prefsReady } = usePreferences();
+  const [pickedTpl, setPickedTpl] = useState<TemplateId>('clean');
+  const [tplTouched, setTplTouched] = useState(false);
+  // Opens on the account default, switches the moment you pick something else.
+  // Derived, so a preference arriving late never overrides your click.
+  const tpl: TemplateId = tplTouched ? pickedTpl : prefsReady ? resumeTemplate : pickedTpl;
   const [d, setD] = useState<Data>(DEFAULTS);
   const [ready, setReady] = useState(false);
 
@@ -74,6 +90,88 @@ export default function Resume() {
     if (ready) localStorage.setItem(STORE, JSON.stringify(d));
   }, [d, ready]);
 
+  // Signed in? Swap the sample identity for the real one. Only fields still
+  // holding a placeholder get touched — anything typed here wins, always.
+  const { status: authStatus, user, ready: authReady } = useAuth();
+  const [prefilled, setPrefilled] = useState(false);
+
+  useEffect(() => {
+    if (!ready || !authReady || prefilled || authStatus !== 'in' || !user) return;
+    let alive = true;
+
+    void (async () => {
+      let fullName = displayName(user);
+      try {
+        const { data } = await createClient()
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .maybeSingle();
+        const stored = (data as { full_name?: string | null } | null)?.full_name?.trim();
+        if (stored) fullName = stored;
+      } catch {
+        /* the auth metadata name is a fine fallback */
+      }
+      if (!alive) return;
+
+      setD((prev) => ({
+        ...prev,
+        name: isPlaceholder(prev.name, DEFAULTS.name) ? fullName : prev.name,
+        email: isPlaceholder(prev.email, DEFAULTS.email) ? (user.email ?? prev.email) : prev.email,
+      }));
+      setPrefilled(true);
+    })();
+
+    return () => {
+      alive = false;
+    };
+  }, [ready, authReady, prefilled, authStatus, user]);
+
+  // Editing is free forever. Only the export spends an allowance, and the
+  // allowance is spent server side, so print only after the server says yes.
+  const { status: planStatus, data: plan, refresh: refreshPlan } = useSubscription();
+  const exportsLeft =
+    planStatus === 'ready' && plan && !plan.has_paid_access
+      ? Math.max(0, FREE_RESUME_LIMIT - plan.resume_uses)
+      : null;
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<{ text: string; href: string; label: string } | null>(null);
+
+  const exportPdf = async () => {
+    setExporting(true);
+    setExportError(null);
+    try {
+      const response = await fetch('/api/usage/resume', { method: 'POST' });
+      if (response.status === 401) {
+        setExportError({
+          text: 'Exports are counted against your account, so you need to be signed in.',
+          href: '/login?next=/resume',
+          label: 'Sign in',
+        });
+        return;
+      }
+      const body = (await response.json().catch(() => null)) as { error?: string } | null;
+      if (!response.ok) {
+        setExportError({
+          text: body?.error?.trim() || 'You have used all your free resume exports.',
+          href: '/pricing',
+          label: 'See Pro',
+        });
+        return;
+      }
+      refreshPlan();
+      window.print();
+    } catch {
+      setExportError({
+        text: 'Could not reach Versified, so the export was not counted. Try again.',
+        href: '/pricing',
+        label: 'See Pro',
+      });
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const set = <K extends keyof Data>(k: K, v: Data[K]) => setD((p) => ({ ...p, [k]: v }));
   const setJob = (id: string, p: Partial<Job>) =>
     setD((prev) => ({ ...prev, jobs: prev.jobs.map((j) => (j.id === id ? { ...j, ...p } : j)) }));
@@ -87,6 +185,7 @@ export default function Resume() {
 
   return (
     <div className="min-h-screen">
+      <GradientBg position="bottom-right" />
       <Nav />
 
       <section className="px-5 pt-28 md:px-8 md:pt-40">
@@ -113,7 +212,10 @@ export default function Resume() {
                   key={t.id}
                   type="button"
                   aria-pressed={on}
-                  onClick={() => setTpl(t.id)}
+                  onClick={() => {
+                    setPickedTpl(t.id);
+                    setTplTouched(true);
+                  }}
                   className="card p-5 text-left transition-transform hover:-translate-y-0.5"
                   style={on ? { boxShadow: '0 0 0 2px var(--color-accent), var(--shadow-card)' } : undefined}
                 >
@@ -218,41 +320,73 @@ export default function Resume() {
               <p className="eyebrow" style={{ color: 'var(--color-faint)' }}>
                 Live preview
               </p>
-              <button type="button" className="btn btn-ink !px-4 !py-2 !text-sm" onClick={() => window.print()}>
-                Export PDF
+              <button
+                type="button"
+                className="btn btn-ink !px-4 !py-2 !text-sm"
+                disabled={exporting}
+                onClick={() => void exportPdf()}
+              >
+                {exporting ? 'Preparing…' : 'Export PDF'}
               </button>
             </div>
             <div id="sheet" className="card-float overflow-hidden">
               <Sheet tpl={tpl} d={d} />
             </div>
+            {exportError ? (
+              <p
+                role="alert"
+                className="mt-3 rounded-xl p-3 text-[0.875rem] leading-relaxed"
+                style={{ background: '#fbecef', color: '#8f2f47' }}
+              >
+                {exportError.text}{' '}
+                <Link
+                  href={exportError.href}
+                  className="font-semibold underline underline-offset-2"
+                  style={{ color: '#8f2f47' }}
+                >
+                  {exportError.label}
+                </Link>
+              </p>
+            ) : null}
+
             <p className="mt-3 text-center text-sm" style={{ color: 'var(--color-faint)' }}>
-              Export uses your browser&rsquo;s print dialog — choose &ldquo;Save as PDF&rdquo;.
+              Export uses your browser&rsquo;s print dialog, choose &ldquo;Save as PDF&rdquo;.
+              {exportsLeft === null ? '' : ` ${exportsLeft} of ${FREE_RESUME_LIMIT} free exports left.`}
             </p>
           </div>
         </div>
       </section>
 
-      <Footer />
+      <Footer tagline="Your skills, their format" />
 
-      <style jsx global>{`
-        @media print {
-          body * {
-            visibility: hidden !important;
-          }
-          #sheet,
-          #sheet * {
-            visibility: visible !important;
-          }
-          #sheet {
-            position: absolute;
-            inset: 0;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-          }
-        }
-      `}</style>
+      {/* Second copy of the sheet, portalled to <body>, shown only by the
+          print stylesheet. Printing the on-page one directly never worked:
+          it lives inside a sticky, clipped, shadowed column. */}
+      <PrintPortal>
+        <Sheet tpl={tpl} d={d} />
+      </PrintPortal>
     </div>
   );
+}
+
+/** Mounts #ally-print as a direct child of <body>; globals.css does the rest. */
+const NO_SUBSCRIBE = () => () => {};
+
+function PrintPortal({ children }: { children: React.ReactNode }) {
+  // false on the server and on the hydrating render, true after — so the portal
+  // only appears once the DOM is ours to touch, without setState in an effect.
+  const mounted = useSyncExternalStore(NO_SUBSCRIBE, () => true, () => false);
+  const [host] = useState(() =>
+    typeof document === 'undefined' ? null : Object.assign(document.createElement('div'), { id: 'ally-print' }),
+  );
+
+  useEffect(() => {
+    if (!host) return;
+    document.body.appendChild(host);
+    return () => host.remove();
+  }, [host]);
+
+  return mounted && host ? createPortal(children, host) : null;
 }
 
 function Label({ children }: { children: React.ReactNode }) {
