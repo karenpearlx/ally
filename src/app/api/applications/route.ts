@@ -1,6 +1,10 @@
 import { ApiError, apiError, paginationFrom, paginationMeta, readJson, requireActiveUser, requireUser, stringField, urlField } from '@/lib/api';
+import { FREE_SAVED_JOB_LIMIT, hasPaidAccess, readSubscription } from '@/lib/subscription';
 
 const STATUSES = ['saved', 'applied', 'follow_up', 'interviewing', 'offer', 'accepted', 'rejected', 'withdrawn'] as const;
+
+const APPLICATION_COLUMNS =
+  'id,job_url,job_title,company,status,notes,follow_up_date,created_at,updated_at';
 
 function parseStatus(value: unknown, fallback: string | null = null) {
   if (value == null && fallback) return fallback;
@@ -40,7 +44,7 @@ export async function GET(request: Request) {
 
     let query = supabase
       .from('applications')
-      .select('id,job_url,job_title,company,status,notes,follow_up_date,created_at,updated_at', { count: 'exact' })
+      .select(APPLICATION_COLUMNS, { count: 'exact' })
       .eq('user_id', user.id)
       .order('updated_at', { ascending: false });
 
@@ -72,15 +76,14 @@ export async function POST(request: Request) {
     const status = parseStatus(body.status, 'applied');
 
     if (status === 'saved') {
-      const [{ data: account }, { count, error: countError }] = await Promise.all([
-        supabase.from('users').select('subscription_tier,subscription_status,subscription_ends_at').eq('id', user.id).maybeSingle(),
+      const [account, { count, error: countError }] = await Promise.all([
+        readSubscription(supabase, user.id),
         supabase.from('applications').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('status', 'saved'),
       ]);
       if (countError) throw countError;
-      const paid = ['pro', 'creator'].includes(account?.subscription_tier)
-        && account?.subscription_status === 'active'
-        && (!account?.subscription_ends_at || new Date(account.subscription_ends_at).getTime() > Date.now());
-      if (!paid && (count ?? 0) >= 20) throw new ApiError(403, 'Free plans can save up to 20 jobs. Upgrade to Pro for unlimited saved jobs.');
+      if (!hasPaidAccess(account) && (count ?? 0) >= FREE_SAVED_JOB_LIMIT) {
+        throw new ApiError(403, `Free plans can save up to ${FREE_SAVED_JOB_LIMIT} jobs. Upgrade to Pro for unlimited saved jobs.`);
+      }
     }
 
     const { data: settings } = await supabase
@@ -91,18 +94,24 @@ export async function POST(request: Request) {
     const followUpDays = settings?.follow_up_days ?? 5;
     const explicitFollowUp = parseFollowUpDate(body.follow_up_date);
 
-    const record = {
+    const record: Record<string, unknown> = {
       user_id: user.id,
       job_url: urlField(body.job_url, 'job_url', true),
       job_title: stringField(body.job_title, 'job_title', { max: 300 }),
       company: stringField(body.company, 'company', { max: 300 }),
       status,
       notes: stringField(body.notes, 'notes', { max: 20_000 }),
-      links: parseLinks(body.links),
       follow_up_date: explicitFollowUp ?? (status === 'applied' ? addDays(new Date(), followUpDays) : null),
     };
+    // Only send links when the client provides them so older DBs without the
+    // column still accept a bookmark. The column default is '[]' when present.
+    if ('links' in body) record.links = parseLinks(body.links);
 
-    const { data, error } = await supabase.from('applications').insert(record).select().single();
+    const { data, error } = await supabase
+      .from('applications')
+      .insert(record)
+      .select(APPLICATION_COLUMNS)
+      .single();
     if (error) throw error;
     return Response.json({ application: data }, { status: 201 });
   } catch (error) {

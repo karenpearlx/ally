@@ -210,7 +210,6 @@ export default function ToolsPage() {
                   <span
                     aria-hidden
                     className="tool-card-arrow grid h-8 w-8 flex-none place-items-center rounded-full"
-                    style={{ border: "1px solid var(--color-line-2)", color: "var(--color-ink)" }}
                   >
                     <svg width="9" height="14" viewBox="0 0 8 13" fill="none">
                       <path

@@ -15,6 +15,8 @@
  * this tab, seconds later.
  */
 
+import { htmlToPlainText } from '@/lib/plain-text';
+
 const PREFIX = 'ally-job-handoff:';
 const MAX_ENTRIES = 6;
 const MAX_DESCRIPTION = 20_000;
@@ -69,7 +71,8 @@ export function sanitiseHandoff(value: unknown): JobHandoff | null {
     title,
     company: short(raw.company),
     url: safeUrl(raw.url),
-    description: block(raw.description, MAX_DESCRIPTION),
+    // Scraped boards ship HTML; the builder textarea and the model want prose.
+    description: block(htmlToPlainText(typeof raw.description === 'string' ? raw.description : ''), MAX_DESCRIPTION),
     source: short(raw.source, 32),
     pay: short(raw.pay, 64),
     skills: Array.isArray(raw.skills)

@@ -2,6 +2,7 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { createClient as createPublicClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 import { sourceGroup } from '@/lib/jobs-meta';
+import { htmlToPlainText } from '@/lib/plain-text';
 
 export type { Job } from '@/lib/jobs-meta';
 export {
@@ -192,7 +193,7 @@ export async function fetchJobDescription(id: string): Promise<string> {
     .maybeSingle();
   if (error) throw error;
   const description = (data as { description?: string | null } | null)?.description;
-  return typeof description === 'string' ? description : '';
+  return typeof description === 'string' ? htmlToPlainText(description) : '';
 }
 
 /**

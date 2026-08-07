@@ -1060,6 +1060,8 @@ nav[aria-label="Primary"] span {
   box-shadow: var(--shadow-float);
 }
 .tool-card-arrow {
+  border: 1px solid var(--color-line-2);
+  color: var(--color-ink);
   transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), background 0.22s ease,
     border-color 0.22s ease, color 0.22s ease;
 }

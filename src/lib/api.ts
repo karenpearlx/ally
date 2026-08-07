@@ -66,9 +66,18 @@ export function postgrestStatus(error: unknown): number | null {
   if (code === 'PGRST116') return 404;
   if (code === '23505') return 409;
   if (code === '23503') return 409;
+  if (code === '23514') return 400;
+  if (code === '23502') return 400;
   if (code === '42501') return 403;
   if (code === '22P02') return 400;
+  if (code === 'PGRST204') return 500;
   return null;
+}
+
+function postgrestMessage(error: unknown): string | null {
+  if (!error || typeof error !== 'object') return null;
+  const message = (error as { message?: unknown }).message;
+  return typeof message === 'string' && message.trim() ? message.trim() : null;
 }
 
 export function apiError(error: unknown) {
@@ -81,14 +90,26 @@ export function apiError(error: unknown) {
   }
   const mappedStatus = postgrestStatus(error);
   if (mappedStatus != null) {
-    const message = mappedStatus === 404
-      ? 'The requested item was not found.'
-      : mappedStatus === 409
-        ? 'That change conflicts with existing data.'
-        : mappedStatus === 403
-          ? 'You do not have permission to make that change.'
-          : 'The request contains an invalid value.';
+    const code = (error as PostgrestErrorLike).code;
+    const dbMessage = postgrestMessage(error);
+    // Check / not-null violations: the DB message names the constraint and is
+    // the fastest way to spot a missing migration (e.g. status lacks 'saved').
+    const message = (code === '23514' || code === '23502' || code === 'PGRST204') && dbMessage
+      ? dbMessage
+      : mappedStatus === 404
+        ? 'The requested item was not found.'
+        : mappedStatus === 409
+          ? 'That change conflicts with existing data.'
+          : mappedStatus === 403
+            ? 'You do not have permission to make that change.'
+            : 'The request contains an invalid value.';
     return Response.json({ error: message }, { status: mappedStatus });
+  }
+  // Other PostgREST/Postgres errors: operational text only, no stack traces.
+  const fallback = postgrestMessage(error);
+  if (fallback && error && typeof error === 'object' && typeof (error as { code?: unknown }).code === 'string') {
+    console.error(error);
+    return Response.json({ error: fallback }, { status: 500 });
   }
   console.error(error);
   return Response.json({ error: 'Unexpected server error.' }, { status: 500 });

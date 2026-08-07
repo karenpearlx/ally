@@ -439,8 +439,8 @@ export default function JobsBoard() {
                       )}
 
                       <div
-                        className="flex items-baseline justify-between gap-3 border-t pt-4"
-                        style={{ borderColor: 'var(--color-line)', marginTop: 'auto', paddingTop: '1rem' }}
+                        className="mt-4 flex items-baseline justify-between gap-3"
+                        style={{ marginTop: 'auto', paddingTop: '1rem' }}
                       >
                         <span
                           className="font-display text-base font-extrabold"
