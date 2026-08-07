@@ -115,7 +115,7 @@ export default function AccountLinks({ account }: { account: SubscriptionAccount
           <span className="block h-px" style={{ background: 'var(--color-line)' }} />
 
           <Row
-            href="/settings"
+            href="/pricing"
             title="Plan & billing"
             badge={{ text: tierLabel(account.subscription_tier), good: paid }}
             note={
@@ -133,19 +133,6 @@ export default function AccountLinks({ account }: { account: SubscriptionAccount
                   strokeWidth="1.4"
                   strokeLinejoin="round"
                 />
-              </svg>
-            }
-          />
-
-          <span className="block h-px" style={{ background: 'var(--color-line)' }} />
-
-          <Row
-            href="/pricing"
-            title="Plans & pricing"
-            note="Compare the tiers side by side."
-            icon={
-              <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
-                <path d="M2.6 3.4h10.8M2.6 8h10.8M2.6 12.6h10.8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
             }
           />
