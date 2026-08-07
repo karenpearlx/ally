@@ -21,6 +21,9 @@ function withWrappers(wrappers: DeepCourseWrapper[] | undefined, children: React
 export default function DeepCourseView({ course, paid }: { course: DeepCourse; paid: boolean }) {
   const locked = course.premium && !paid;
   const premiumTrackCount = DEEP_COURSES.filter((c) => c.premium).length;
+  const modulesChunkIndex = course.chunks.findIndex(
+    (chunk) => chunk.kind === 'slot' && chunk.value === 'MODULES',
+  );
 
   return (
     <div className="min-h-screen">
@@ -28,6 +31,11 @@ export default function DeepCourseView({ course, paid }: { course: DeepCourse; p
 
       <main>
         {course.chunks.map((chunk, i) => {
+          // A logged-out reader gets the course introduction and preview modules.
+          // Everything authored after the module list belongs to the paid track and
+          // must not be included in the response at all.
+          if (locked && modulesChunkIndex >= 0 && i > modulesChunkIndex) return null;
+
           if (chunk.kind === 'html') {
             if (!chunk.value) return null;
             return (

@@ -110,7 +110,7 @@ export default function DeepCourseIndex({ paid }: { paid: boolean }) {
             <p className="mt-4 max-w-2xl text-[1.0625rem] leading-relaxed text-ink-2">{COURSES_INDEX.lede}</p>
             <div className="mt-6 flex flex-wrap gap-2">
               <Pill tone="teal">{cards.length} tracks written</Pill>
-              <Pill tone="leaf">{freeCount} free with an account</Pill>
+              <Pill tone="leaf">{freeCount} free tracks</Pill>
               <Pill tone="clay">{proCount} Pro tracks</Pill>
             </div>
           </div>
