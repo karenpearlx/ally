@@ -25,7 +25,7 @@ const FAQ: Item[] = [
   {
     q: "What job sites do you pull from?",
     a: [
-      "OnlineJobs.ph and RemoteOK are live now, refreshed daily and deduped so the same role does not show up three times. Upwork is wired up and switching on next.",
+      "OnlineJobs.ph, RemoteOK and We Work Remotely, refreshed through the day and deduped so the same role does not show up three times.",
       "Every listing links straight back to the original post. Versified never sits between you and the client.",
     ],
   },

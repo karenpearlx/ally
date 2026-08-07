@@ -22,7 +22,7 @@ import { track } from '@/lib/analytics';
 import { useSavedJobs, jobKey, type SaveNotice } from '@/lib/useSavedJobs';
 import SaveJobButton from '@/components/jobs/SaveJobButton';
 
-const SOURCES = ['olj', 'remoteok', 'upwork'] as const;
+const SOURCES = ['olj', 'remoteok', 'wwr'] as const;
 
 type SortMode = 'newest' | 'oldest' | 'paid';
 
@@ -198,7 +198,7 @@ export default function Jobs() {
               Every listing, side by side<span className="dot">.</span>
             </h1>
             <p className="lede mt-5 max-w-xl">
-              Pulled from OnlineJobs.ph, RemoteOK, and Upwork. Tap through to apply on
+              Pulled from OnlineJobs.ph, RemoteOK, and We Work Remotely. Tap through to apply on
               the original site.
             </p>
 
@@ -255,8 +255,7 @@ export default function Jobs() {
                     {SOURCES.map((s) => {
                       const meta = sourceMeta(s);
                       const n = counts[s] ?? 0;
-                      // Upwork has no token yet, so it syncs nothing. Leave it
-                      // visible but unselectable instead of quietly dropping it.
+                      // If a source has no jobs yet, show it but disable selection.
                       const empty = !loading && n === 0;
                       return (
                         <option key={s} value={s} disabled={empty}>

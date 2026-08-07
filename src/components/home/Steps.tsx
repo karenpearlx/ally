@@ -14,7 +14,7 @@ const STEPS = [
   {
     n: "1",
     t: "Search once",
-    d: "OnlineJobs, Upwork and RemoteOK in a single feed, deduped and filtered to work Filipino VAs actually get hired for.",
+    d: "OnlineJobs, RemoteOK and We Work Remotely in a single feed, deduped and filtered to work Filipino VAs actually get hired for.",
     href: "/jobs",
     cta: "Browse jobs",
   },

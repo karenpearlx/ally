@@ -12,7 +12,7 @@ import Reveal from "../Reveal";
  */
 
 const OLD = [
-  "Checking OLJ, Upwork and RemoteOK separately, every single day",
+  "Checking OLJ, RemoteOK and We Work Remotely separately, every single day",
   "Applications living in a spreadsheet you stopped updating in March",
   "Guessing your rate, then quoting low because you guessed nervous",
   "Learning the job from whichever YouTube video autoplayed next",

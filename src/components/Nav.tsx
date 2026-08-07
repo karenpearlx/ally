@@ -55,8 +55,11 @@ export default function Nav() {
   // header never shows a private link to someone who turns out to be a visitor.
   // Only show signed-in nav once auth is ready
   const signedIn = ready && status === "in" && Boolean(user);
+  const isAdmin = signedIn && user?.email?.toLowerCase() === "kpearl099@gmail.com";
   const links = signedIn ? [DASHBOARD, ...LINKS] : LINKS;
-  const sheetLinks = signedIn ? SHEET_LINKS : [...LINKS, { href: "/help", label: "Help" }];
+  const sheetLinks = signedIn 
+    ? [...SHEET_LINKS, ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : [])]
+    : [...LINKS, { href: "/help", label: "Help" }];
   const home = signedIn ? DASHBOARD.href : "/";
 
   useEffect(() => {

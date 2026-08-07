@@ -38,7 +38,7 @@ const FAQ: Entry[] = [
   {
     q: "Where do the listings come from?",
     a: [
-      "OnlineJobs.ph and RemoteOK, refreshed through the day and deduped so the same role does not appear three times. Upwork is wired up but not switched on yet, which is why its filter shows no listings.",
+      "OnlineJobs.ph, RemoteOK and We Work Remotely, refreshed through the day and deduped so the same role does not appear three times.",
       "Every card links back to the original post. You apply on the client's site, under your own name.",
     ],
   },
@@ -92,10 +92,12 @@ const FIXES: Fix[] = [
     ],
   },
   {
-    symptom: "Upwork shows no jobs",
-    cause: "Expected. Upwork needs an API token that is not connected yet.",
+    symptom: "Where did Upwork go?",
+    cause:
+      "Upwork turned down the API access Versified applied for, so there is no sanctioned way to sync their listings. Rather than leave a filter that could only ever be empty, it was removed.",
     steps: [
-      "Nothing to fix on your side. The option is greyed out until the sync goes live.",
+      "We Work Remotely took its place in the source dropdown and posts a lot of the same remote roles.",
+      "Upwork is still worth checking directly. Versified just cannot mirror it.",
     ],
   },
   {

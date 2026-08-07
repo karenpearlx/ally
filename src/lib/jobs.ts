@@ -35,7 +35,11 @@ export interface Job {
 export const SOURCE_META: Record<string, { label: string; short: string; bg: string; fg: string }> = {
   olj: { label: 'OnlineJobs.ph', short: 'OLJ', bg: '#eef2ff', fg: '#4453b8' },
   remoteok: { label: 'RemoteOK', short: 'RemoteOK', bg: '#fdf0e8', fg: '#b5581f' },
-  upwork: { label: 'Upwork', short: 'Upwork', bg: '#e9f6ec', fg: '#2f7a45' },
+  wwr: { label: 'We Work Remotely', short: 'WWR', bg: '#e9f6ec', fg: '#2f7a45' },
+  // Upwork is no longer scraped (the API application was rejected) and is gone
+  // from the board's filter. The meta stays so any row still in the table from
+  // the old sync renders a real label instead of the raw slug.
+  upwork: { label: 'Upwork', short: 'Upwork', bg: '#eef2ff', fg: '#4453b8' },
 };
 
 export function sourceMeta(source: string) {

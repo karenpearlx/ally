@@ -142,8 +142,17 @@ async function run() {
 
   const srcOpts = await sourceSel.locator('option').allTextContents();
   check(
-    '/jobs source offers all four options',
-    srcOpts.length === 4 && /All sources/.test(srcOpts[0]),
+    '/jobs source lists all, OLJ, RemoteOK and We Work Remotely',
+    srcOpts.length === 4 &&
+      /All sources/.test(srcOpts[0]) &&
+      /OnlineJobs\.ph/.test(srcOpts[1]) &&
+      /RemoteOK/.test(srcOpts[2]) &&
+      /We Work Remotely/.test(srcOpts[3]),
+    srcOpts.join(' | '),
+  );
+  check(
+    '/jobs source dropdown has no Upwork option',
+    !srcOpts.some((o) => /Upwork/i.test(o)),
     srcOpts.join(' | '),
   );
 
