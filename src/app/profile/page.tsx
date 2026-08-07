@@ -4,8 +4,10 @@ import Nav from '@/components/Nav';
 import Footer from '@/components/Footer';
 import GradientBg from '@/components/GradientBg';
 import ProfileForm from '@/components/profile/ProfileForm';
+import AccountLinks from '@/components/profile/AccountLinks';
 import { createClient } from '@/lib/supabase/server';
 import { readProfile } from '@/lib/profile-store';
+import { readSubscription } from '@/lib/subscription';
 
 export const metadata: Metadata = {
   title: 'Profile · Versified',
@@ -24,7 +26,11 @@ export default async function ProfilePage() {
 
   if (!user) redirect('/login?next=/profile');
 
-  const { profile, ready } = await readProfile(supabase, user.id);
+  // Independent reads, so they should not queue behind each other.
+  const [{ profile, ready }, account] = await Promise.all([
+    readProfile(supabase, user.id),
+    readSubscription(supabase, user.id),
+  ]);
 
   return (
     <div className="min-h-screen">
@@ -48,6 +54,8 @@ export default async function ProfilePage() {
       </section>
 
       <ProfileForm userId={user.id} authEmail={user.email ?? ''} initial={profile} ready={ready} />
+
+      <AccountLinks account={account} />
 
       <Footer />
     </div>

@@ -24,6 +24,8 @@ import SaveJobButton from '@/components/jobs/SaveJobButton';
 
 const SOURCES = ['olj', 'remoteok', 'upwork'] as const;
 
+type SortMode = 'newest' | 'oldest' | 'paid';
+
 /** Cards per page. 24 keeps the 2-column grid even and the DOM under ~1 screenful of scroll. */
 const PER_PAGE = 24;
 
@@ -34,8 +36,13 @@ export default function Jobs() {
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
-  const [paidOnly, setPaidOnly] = useState(false);
-  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+  // One control covers what used to be a "Rate listed" toggle plus two sort
+  // chips. 'paid' is the odd one out — it narrows the list rather than
+  // reordering it — but it lives here because that is how it reads to someone
+  // scanning the board, and a fourth pill was not worth the row.
+  const [sortMode, setSortMode] = useState<SortMode>('newest');
+  const paidOnly = sortMode === 'paid';
+  const sortOrder: 'newest' | 'oldest' = sortMode === 'oldest' ? 'oldest' : 'newest';
   /** Which card is mid-handoff, so only that button shows a spinner. */
   const [preparing, setPreparing] = useState<string | null>(null);
   const [rawPage, setPage] = useState(1);
@@ -174,8 +181,7 @@ export default function Jobs() {
   const clearAll = () => {
     setSearchQuery('');
     setSourceFilter('all');
-    setPaidOnly(false);
-    setSortOrder('newest');
+    setSortMode('newest');
     setPage(1);
   };
 
@@ -224,93 +230,63 @@ export default function Jobs() {
                 </span>
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  className="chip"
-                  data-on={sourceFilter === 'all'}
-                  aria-pressed={sourceFilter === 'all'}
-                  onClick={() => {
-                    setSourceFilter('all');
-                    setPage(1);
-                  }}
-                >
-                  All sources
-                  {!loading && <Count n={counts.all ?? 0} on={sourceFilter === 'all'} />}
-                </button>
+              {/* Two selects rather than a wrapping row of chips: eight pills
+                  ate three lines on a phone and pushed the first card below
+                  the fold. Native <select> keeps the iOS wheel and the
+                  screen-reader semantics for free. */}
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="jobs-source" className="sr-only">
+                    Filter by source
+                  </label>
+                  <select
+                    id="jobs-source"
+                    className="select-pill"
+                    data-on={sourceFilter !== 'all'}
+                    value={sourceFilter}
+                    onChange={(e) => {
+                      setSourceFilter(e.target.value);
+                      setPage(1);
+                    }}
+                  >
+                    <option value="all">
+                      All sources{loading ? '' : ` (${counts.all ?? 0})`}
+                    </option>
+                    {SOURCES.map((s) => {
+                      const meta = sourceMeta(s);
+                      const n = counts[s] ?? 0;
+                      // Upwork has no token yet, so it syncs nothing. Leave it
+                      // visible but unselectable instead of quietly dropping it.
+                      const empty = !loading && n === 0;
+                      return (
+                        <option key={s} value={s} disabled={empty}>
+                          {meta.label}
+                          {loading ? '' : empty ? ' (none yet)' : ` (${n})`}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
 
-                {SOURCES.map((s) => {
-                  const meta = sourceMeta(s);
-                  const n = counts[s] ?? 0;
-                  const on = sourceFilter === s;
-                  const empty = !loading && n === 0;
-                  return (
-                    <button
-                      key={s}
-                      type="button"
-                      className="chip"
-                      data-on={on}
-                      aria-pressed={on}
-                      disabled={empty}
-                      title={
-                        empty
-                          ? s === 'upwork'
-                            ? 'Upwork needs an API token — no listings synced yet'
-                            : 'No listings from this source right now'
-                          : undefined
-                      }
-                      style={empty ? { opacity: 0.45, cursor: 'not-allowed' } : undefined}
-                      onClick={() => {
-                        if (empty) return;
-                        setSourceFilter(s);
-                        setPage(1);
-                      }}
-                    >
-                      {meta.label}
-                      {!loading && <Count n={n} on={on} />}
-                    </button>
-                  );
-                })}
-
-                <button
-                  type="button"
-                  className="chip"
-                  data-on={paidOnly}
-                  aria-pressed={paidOnly}
-                  onClick={() => {
-                    setPaidOnly((v) => !v);
-                    setPage(1);
-                  }}
-                >
-                  Rate listed
-                </button>
-
-                <span className="mx-1" style={{ color: 'var(--color-line-2)' }}>|</span>
-
-                <button
-                  type="button"
-                  className="chip"
-                  data-on={sortOrder === 'newest'}
-                  aria-pressed={sortOrder === 'newest'}
-                  onClick={() => {
-                    setSortOrder('newest');
-                    setPage(1);
-                  }}
-                >
-                  Newest
-                </button>
-                <button
-                  type="button"
-                  className="chip"
-                  data-on={sortOrder === 'oldest'}
-                  aria-pressed={sortOrder === 'oldest'}
-                  onClick={() => {
-                    setSortOrder('oldest');
-                    setPage(1);
-                  }}
-                >
-                  Oldest
-                </button>
+                <div>
+                  <label htmlFor="jobs-sort" className="sr-only">
+                    Sort listings
+                  </label>
+                  <select
+                    id="jobs-sort"
+                    className="select-pill"
+                    data-on={sortMode !== 'newest'}
+                    value={sortMode}
+                    onChange={(e) => {
+                      setSortMode(e.target.value as SortMode);
+                      setPage(1);
+                    }}
+                  >
+                    <option value="newest">Newest first</option>
+                    <option value="oldest">Oldest first</option>
+                    <option value="paid">Rate listed only</option>
+                  </select>
+                </div>
               </div>
             </div>
 
@@ -323,7 +299,7 @@ export default function Jobs() {
                     : `Showing ${start + 1}–${start + visibleJobs.length} of ${filteredJobs.length} listings` +
                       (pageCount > 1 ? ` · page ${page} of ${pageCount}` : '')}
               </p>
-              {!loading && (searchQuery || sourceFilter !== 'all' || paidOnly) && (
+              {!loading && (searchQuery || sourceFilter !== 'all' || sortMode !== 'newest') && (
                 <button
                   type="button"
                   onClick={clearAll}
@@ -625,19 +601,6 @@ function Spinner() {
   );
 }
 
-function Count({ n, on }: { n: number; on: boolean }) {
-  return (
-    <span
-      className="ml-1 rounded-full px-1.5 py-0.5 text-[0.6875rem] font-semibold tabular-nums"
-      style={{
-        background: on ? 'rgba(255,255,255,.18)' : 'var(--color-paper-2)',
-        color: on ? '#fff' : 'var(--color-muted)',
-      }}
-    >
-      {n}
-    </span>
-  );
-}
 
 /**
  * One line of feedback after a bookmark, pinned above the mobile bottom nav.

@@ -10,6 +10,7 @@
 import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
 import { scrapeUpwork } from './lib/upwork.mjs';
+import { scrapeWWR } from './lib/wwr.mjs';
 import { extractJobSlugs, parseOLJJob } from './lib/olj.mjs';
 
 config({ path: new URL('../.env.local', import.meta.url) });
@@ -133,9 +134,9 @@ async function saveJobs(jobs) {
 }
 
 async function main() {
-  console.log(`Starting Ally scraper at ${new Date().toISOString()}`);
-  const results = await Promise.allSettled([scrapeOLJ(), scrapeRemoteOK(), scrapeUpwork()]);
-  const names = ['olj', 'remoteok', 'upwork'];
+  console.log(`Starting Versified scraper at ${new Date().toISOString()}`);
+  const results = await Promise.allSettled([scrapeOLJ(), scrapeRemoteOK(), scrapeUpwork(), scrapeWWR()]);
+  const names = ['olj', 'remoteok', 'upwork', 'wwr'];
   const allJobs = [];
 
   results.forEach((result, index) => {

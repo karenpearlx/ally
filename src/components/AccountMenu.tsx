@@ -261,52 +261,44 @@ export function AccountMenu({ user }: { user: User }) {
 
 /* ---------- mobile sheet ---------- */
 
-/** `onDismiss` closes the mobile sheet — after a sign-out, and on any link out. */
+/**
+ * The account block at the foot of the phone sheet.
+ *
+ * The card itself is the link to /profile — Profile, Settings and Plans were
+ * three more rows saying what tapping your own name already says, and the
+ * sheet is not where you want a scroll. Settings and billing hang off the
+ * profile page now. Sign out stays, because it is the one thing here that is
+ * not navigation and should never be a tap deeper than it has to be.
+ */
 export function AccountSheetBlock({ user, onDismiss }: { user: User; onDismiss?: () => void }) {
   const { signOut, busy } = useSignOut(onDismiss);
 
   return (
     <div className="mt-2">
-      <div
-        className="flex items-center gap-3 rounded-2xl px-4 py-3"
+      <Link
+        href="/profile"
+        onClick={onDismiss}
+        aria-label={`Your profile, ${displayName(user)}`}
+        className="flex items-center gap-3 rounded-2xl px-4 py-3.5 transition-colors active:opacity-70"
         style={{ background: "var(--color-paper-2)" }}
       >
-        <Avatar user={user} size={36} />
-        <span className="min-w-0">
+        <Avatar user={user} size={40} />
+        <span className="min-w-0 flex-1">
           <span className="block truncate text-[0.9375rem] font-semibold" style={{ color: "var(--color-ink)" }}>
             {displayName(user)}
           </span>
           <span className="block truncate text-sm" style={{ color: "var(--color-muted)" }}>
             {user.email}
           </span>
+          <span className="mt-0.5 block text-xs font-semibold" style={{ color: "var(--color-accent)" }}>
+            Profile, settings &amp; plan
+          </span>
         </span>
-      </div>
-
-      <Link
-        href="/profile"
-        onClick={onDismiss}
-        className="btn btn-ghost mt-2 w-full !py-3.5 !text-base"
-      >
-        <PersonIcon />
-        Profile
-      </Link>
-
-      <Link
-        href="/settings"
-        onClick={onDismiss}
-        className="btn btn-ghost mt-2 w-full !py-3.5 !text-base"
-      >
-        <GearIcon />
-        Settings
-      </Link>
-
-      <Link
-        href="/pricing"
-        onClick={onDismiss}
-        className="btn btn-ghost mt-2 w-full !py-3.5 !text-base"
-      >
-        <SparkIcon />
-        Plans &amp; pricing
+        <span aria-hidden className="flex-none" style={{ color: "var(--color-faint)" }}>
+          <svg width="8" height="13" viewBox="0 0 8 13" fill="none">
+            <path d="M1.5 1.5 6.5 6.5l-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </span>
       </Link>
 
       <button
@@ -317,7 +309,7 @@ export function AccountSheetBlock({ user, onDismiss }: { user: User; onDismiss?:
         style={{ opacity: busy ? 0.6 : 1 }}
       >
         <ExitIcon />
-        {busy ? "Signing out…" : "Sign out"}
+        {busy ? "Signing out\u2026" : "Sign out"}
       </button>
     </div>
   );

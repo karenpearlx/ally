@@ -28,10 +28,19 @@ const DASHBOARD: NavLink = { href: "/dashboard", label: "Dashboard" };
 const LINKS: NavLink[] = [
   { href: "/jobs", label: "Jobs" },
   { href: "/tracker", label: "Tracker" },
-  { href: "/pricing-tool", label: "Rate check", wide: true },
-  { href: "/interview-prep", label: "Interview", wide: true },
+  { href: "/tools", label: "Tools", wide: true },
   { href: "/learn", label: "Learn" },
   { href: "/pricing", label: "Pricing", alwaysWide: true },
+];
+
+// The phone sheet is not the desktop bar with a different layout.
+// Dashboard, Jobs, Tracker and Courses already live in the bottom tab bar, so
+// repeating them here just buried the two things the tab bar has no room for.
+// Signed in you get those two plus the account block; signed out there is no
+// tab bar worth speaking of, so the sheet stays the full menu.
+const SHEET_LINKS: NavLink[] = [
+  { href: "/tools", label: "Tools" },
+  { href: "/help", label: "Help" },
 ];
 
 
@@ -47,6 +56,7 @@ export default function Nav() {
   // Only show signed-in nav once auth is ready
   const signedIn = ready && status === "in" && Boolean(user);
   const links = signedIn ? [DASHBOARD, ...LINKS] : LINKS;
+  const sheetLinks = signedIn ? SHEET_LINKS : [...LINKS, { href: "/help", label: "Help" }];
   const home = signedIn ? DASHBOARD.href : "/";
 
   useEffect(() => {
@@ -192,7 +202,7 @@ export default function Nav() {
             transition: "transform .28s cubic-bezier(.22,1,.36,1)",
           }}
         >
-          {links.map((l) => (
+          {sheetLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
