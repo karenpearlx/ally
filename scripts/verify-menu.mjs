@@ -16,6 +16,31 @@ const EMAIL = process.env.VRSFD_EMAIL;
 const PASSWORD = process.env.VRSFD_PASSWORD;
 const SHOTS = process.env.SHOTS ?? '/tmp/vrsfd-shots';
 
+/** The first-visit modal sits over everything; get rid of it before looking. */
+async function dismiss(page) {
+  for (const name of [/Maybe later/i, /Browse jobs first/i, /^Close$/i]) {
+    const b = page.getByRole('button', { name }).first();
+    if (await b.count().catch(() => 0)) {
+      await b.click({ timeout: 2000 }).catch(() => {});
+      break;
+    }
+  }
+  await page.waitForTimeout(400);
+}
+
+/** Reveal-on-scroll means a full-page shot of an unscrolled page is half blank. */
+async function scrollThrough(page) {
+  await page.evaluate(async () => {
+    const step = window.innerHeight * 0.8;
+    for (let y = 0; y < document.body.scrollHeight; y += step) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 120));
+    }
+    window.scrollTo(0, 0);
+  });
+  await page.waitForTimeout(700);
+}
+
 const results = [];
 const check = (name, ok, detail = '') => {
   results.push({ name, ok, detail });
@@ -62,6 +87,8 @@ async function run() {
   }
 
   await page.goto(`${BASE}/tools`, { waitUntil: 'networkidle' });
+  await dismiss(page);
+  await scrollThrough(page);
   const hScroll = await page.evaluate(
     () => document.documentElement.scrollWidth > window.innerWidth + 1,
   );
@@ -71,6 +98,7 @@ async function run() {
   /* ---------------- /help ---------------- */
 
   const helpRes = await page.goto(`${BASE}/help`, { waitUntil: 'networkidle' });
+  await dismiss(page);
   check('/help responds 200', helpRes?.status() === 200, `status ${helpRes?.status()}`);
   for (const id of ['faqs', 'fixes', 'guides']) {
     check(`/help has the #${id} section`, (await page.locator(`#${id}`).count()) === 1);
@@ -83,6 +111,7 @@ async function run() {
   await first.locator('summary').click();
   check('/help accordion opens on tap', await first.evaluate((el) => el.open));
 
+  await scrollThrough(page);
   const helpScroll = await page.evaluate(
     () => document.documentElement.scrollWidth > window.innerWidth + 1,
   );
@@ -92,6 +121,7 @@ async function run() {
   /* ---------------- /jobs dropdowns ---------------- */
 
   await page.goto(`${BASE}/jobs`, { waitUntil: 'networkidle' });
+  await dismiss(page);
   await page.waitForTimeout(2500);
 
   const sourceSel = page.locator('#jobs-source');
@@ -117,7 +147,9 @@ async function run() {
     srcOpts.join(' | '),
   );
 
-  const countText = () => page.locator('[aria-live="polite"]').first().innerText();
+  // The results line, not whatever other aria-live region the page mounts.
+  const countText = async () =>
+    (await page.locator('p[aria-live="polite"]').filter({ hasText: /listings|matches|Loading/ }).first().innerText()).trim();
   const before = await countText();
 
   await sourceSel.selectOption('olj');
@@ -160,6 +192,7 @@ async function run() {
   /* ---------------- signed-out phone sheet ---------------- */
 
   await page.goto(`${BASE}/jobs`, { waitUntil: 'domcontentloaded' });
+  await dismiss(page);
   await page.getByRole('button', { name: 'Open menu' }).click();
   await page.waitForTimeout(450);
   check(
@@ -238,10 +271,15 @@ async function run() {
   const desktop = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const dp = await desktop.newPage();
   await dp.goto(`${BASE}/tools`, { waitUntil: 'networkidle' });
+  await dismiss(dp);
+  await scrollThrough(dp);
   await dp.screenshot({ path: `${SHOTS}/tools-desktop.png`, fullPage: true });
   await dp.goto(`${BASE}/help`, { waitUntil: 'networkidle' });
+  await dismiss(dp);
+  await scrollThrough(dp);
   await dp.screenshot({ path: `${SHOTS}/help-desktop.png`, fullPage: true });
   await dp.goto(`${BASE}/jobs`, { waitUntil: 'networkidle' });
+  await dismiss(dp);
   await dp.waitForTimeout(2500);
   await dp.screenshot({ path: `${SHOTS}/jobs-desktop.png` });
 

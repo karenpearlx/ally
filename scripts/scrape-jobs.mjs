@@ -9,7 +9,6 @@
 
 import { config } from 'dotenv';
 import { createClient } from '@supabase/supabase-js';
-import { scrapeUpwork } from './lib/upwork.mjs';
 import { scrapeWWR } from './lib/wwr.mjs';
 import { extractJobSlugs, parseOLJJob } from './lib/olj.mjs';
 
@@ -135,8 +134,8 @@ async function saveJobs(jobs) {
 
 async function main() {
   console.log(`Starting Versified scraper at ${new Date().toISOString()}`);
-  const results = await Promise.allSettled([scrapeOLJ(), scrapeRemoteOK(), scrapeUpwork(), scrapeWWR()]);
-  const names = ['olj', 'remoteok', 'upwork', 'wwr'];
+  const results = await Promise.allSettled([scrapeOLJ(), scrapeRemoteOK(), scrapeWWR()]);
+  const names = ['olj', 'remoteok', 'wwr'];
   const allJobs = [];
 
   results.forEach((result, index) => {
