@@ -31,14 +31,18 @@ async function dismiss(page) {
 /** Reveal-on-scroll means a full-page shot of an unscrolled page is half blank. */
 async function scrollThrough(page) {
   await page.evaluate(async () => {
-    const step = window.innerHeight * 0.8;
+    // Smaller steps and a longer pause than feels necessary: the shared
+    // IntersectionObserver needs a frame to fire, and a fast synthetic scroll
+    // skips past sections so the full-page shot comes out half blank. That is
+    // a screenshot artefact, not a reveal bug, but it hides real ones.
+    const step = window.innerHeight * 0.35;
     for (let y = 0; y < document.body.scrollHeight; y += step) {
       window.scrollTo(0, y);
-      await new Promise((r) => setTimeout(r, 120));
+      await new Promise((r) => setTimeout(r, 350));
     }
     window.scrollTo(0, 0);
   });
-  await page.waitForTimeout(700);
+  await page.waitForTimeout(900);
 }
 
 const results = [];
