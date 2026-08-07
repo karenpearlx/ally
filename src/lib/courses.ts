@@ -1203,7 +1203,21 @@ export const BASIC_COURSE_SLUGS = new Set([
  * onto each course. Checklists are index-aligned to `lessons`; scripts/check-extras.mjs
  * fails the build if a course ever gains or loses a lesson without its checklist.
  */
-export const COURSES: Course[] = BASE_COURSES.map((base) => {
+/**
+ * Four niche tracks were superseded by the longer written versions. Keep the
+ * slugs alive as redirects, but drop them from the listings so the same subject
+ * never appears twice.
+ */
+export const SUPERSEDED_BY_DEEP_TRACK: Record<string, string> = {
+  'seo-for-vas': 'seo-specialist',
+  'social-media-management': 'social-media-manager',
+  'ecommerce-operations': 'ecommerce-va',
+  'operations-lead': 'becoming-an-ops-lead',
+};
+
+export const COURSES: Course[] = BASE_COURSES.filter(
+  (base) => !(base.slug in SUPERSEDED_BY_DEEP_TRACK),
+).map((base) => {
   const course: Course = { ...base, premium: !BASIC_COURSE_SLUGS.has(base.slug) };
   const extra = EXTRAS[course.slug];
   if (!extra) return course;
