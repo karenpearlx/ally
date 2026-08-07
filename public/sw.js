@@ -13,21 +13,22 @@
  *
  *  - Images/fonts: STALE WHILE REVALIDATE. Instant, quietly refreshed.
  *
- *  - Everything else (API, auth, admin): NOT CACHED, ever.
- *    Caching a logged-in API response risks handing one user another user's
- *    data from disk. Not worth it for an offline nicety.
+ *  - Everything else (API, auth, admin): NETWORK ONLY, never cached.
+ *    /auth/callback exchanges a one-time OAuth code. A duplicate fetch
+ *    (classic with navigation preload + early-return) burns the code and
+ *    surfaces "invalid flow state". These paths must hit the network once.
  *
  * Bump SW_VERSION to roll every cache at once.
  */
 
-const SW_VERSION = 'v1';
+const SW_VERSION = 'v2';
 const SHELL = `ally-shell-${SW_VERSION}`;
 const STATIC = `ally-static-${SW_VERSION}`;
 const ASSETS = `ally-assets-${SW_VERSION}`;
 const OFFLINE_URL = '/offline';
 
-/** Requests we must never serve from disk. */
-const NEVER_CACHE = [/^\/api\//, /^\/auth\//, /^\/admin(\/|$)/];
+/** Paths that must never be cached and must not be double-fetched. */
+const NETWORK_ONLY = [/^\/api\//, /^\/auth\//, /^\/admin(\/|$)/];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -48,10 +49,10 @@ self.addEventListener('activate', (event) => {
       const names = await caches.keys();
       await Promise.all(names.map((n) => (keep.has(n) ? null : caches.delete(n))));
 
-      // Navigation preload lets the network request start before this worker
-      // has even booted, which removes the usual SW cold-start penalty.
+      // Navigation preload + an early-return fetch handler double-hits
+      // /auth/callback and burns the one-time OAuth code. Keep it off.
       if (self.registration.navigationPreload) {
-        await self.registration.navigationPreload.enable();
+        await self.registration.navigationPreload.disable();
       }
       await self.clients.claim();
     })()
@@ -67,15 +68,14 @@ function cacheable(response) {
   return response && response.status === 200 && response.type === 'basic';
 }
 
-async function networkFirst(event) {
+async function networkFirst(request) {
   const cache = await caches.open(SHELL);
   try {
-    const preload = await event.preloadResponse;
-    const fresh = preload || (await fetch(event.request));
-    if (cacheable(fresh)) cache.put(event.request, fresh.clone());
+    const fresh = await fetch(request);
+    if (cacheable(fresh)) cache.put(request, fresh.clone());
     return fresh;
   } catch {
-    const hit = await cache.match(event.request);
+    const hit = await cache.match(request);
     if (hit) return hit;
     const offline = await cache.match(OFFLINE_URL);
     if (offline) return offline;
@@ -118,10 +118,15 @@ self.addEventListener('fetch', (event) => {
   // Range requests (media seeking) break if answered with a full cached body.
   if (request.headers.has('range')) return;
 
-  if (NEVER_CACHE.some((re) => re.test(url.pathname))) return;
+  // Auth/API/admin: one network fetch, no cache. respondWith so the browser
+  // does not also issue a second navigation request beside a preload.
+  if (NETWORK_ONLY.some((re) => re.test(url.pathname))) {
+    event.respondWith(fetch(request));
+    return;
+  }
 
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirst(event));
+    event.respondWith(networkFirst(request));
     return;
   }
 

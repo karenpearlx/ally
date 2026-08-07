@@ -34,16 +34,19 @@ export default function PWA() {
         .register('/sw.js', { scope: '/' })
         .then((r) => {
           reg = r;
-          // A new worker is downloading; tell the user once it's parked.
+          // A new worker is downloading. Auth depends on the latest SW (v2
+          // stopped double-fetching /auth/callback), so activate it immediately
+          // instead of waiting for the "Refresh" banner.
           r.addEventListener('updatefound', () => {
             const sw = r.installing;
             if (!sw) return;
             sw.addEventListener('statechange', () => {
               if (sw.state === 'installed' && navigator.serviceWorker.controller) {
-                setUpdateReady(r);
+                sw.postMessage('SKIP_WAITING');
               }
             });
           });
+          void r.update();
         })
         .catch(() => {
           /* a failed SW must never break the page */

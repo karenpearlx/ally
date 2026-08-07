@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
@@ -45,8 +45,32 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState<null | "email" | "google">(null);
-  const [error, setError] = useState<string | null>(callbackError);
+  const [error, setError] = useState<string | null>(
+    callbackError && /invalid flow state/i.test(callbackError)
+      ? "Google sign-in hit a glitch. Please try Continue with Google once more."
+      : callbackError,
+  );
   const [notice, setNotice] = useState<string | null>(null);
+
+  // A raced OAuth callback can show "invalid flow state" even when the first
+  // request already signed the user in. If we have a session, just continue.
+  useEffect(() => {
+    if (!callbackError || !/invalid flow state|flow state/i.test(callbackError)) return;
+    let live = true;
+    createClient()
+      .auth.getSession()
+      .then(({ data }) => {
+        if (!live || !data.session) return;
+        router.replace(next);
+        router.refresh();
+      })
+      .catch(() => {
+        /* keep the friendlier error on screen */
+      });
+    return () => {
+      live = false;
+    };
+  }, [callbackError, next, router]);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -224,6 +248,8 @@ export default function AuthForm({ mode }: { mode: Mode }) {
 /** Supabase errors are usually readable, but a few are useless to a human. */
 function messageFor(err: unknown) {
   const raw = err instanceof Error ? err.message : String(err ?? "");
+  if (/invalid flow state|flow state/i.test(raw))
+    return "Google sign-in hit a glitch. Please try Continue with Google once more.";
   if (/invalid login credentials/i.test(raw)) return "That email and password don't match an account.";
   if (/email not confirmed/i.test(raw)) return "Confirm your email first — check your inbox for the link.";
   if (/user already registered/i.test(raw)) return "There's already an account with that email. Try signing in.";

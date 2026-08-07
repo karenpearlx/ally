@@ -8,13 +8,24 @@ import { createRouteHandlerClient } from "@/lib/supabase/route";
  * Cookie writes must land on the redirect response. Using cookies() from
  * next/headers alone can drop Set-Cookie on NextResponse.redirect, and the
  * PKCE verifier must still be present on the request when we exchange.
+ *
+ * The auth code is single-use. A duplicate navigation (seen with service-worker
+ * navigation preload) burns it and returns "invalid flow state". We map that
+ * to a retryable login error; the SW no longer double-fetches /auth/*.
  */
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const origin = requestOrigin(request);
   const code = url.searchParams.get("code");
   const flowId = url.searchParams.get("sb_flow_id");
+  const oauthError = url.searchParams.get("error_description") || url.searchParams.get("error");
   const next = safeNextPath(url.searchParams.get("next"));
+
+  if (oauthError && !code) {
+    const destination = new URL("/login", origin);
+    destination.searchParams.set("error", oauthError);
+    return NextResponse.redirect(destination);
+  }
 
   if (!code) {
     return NextResponse.redirect(new URL("/login?error=Missing+authentication+code", origin));
@@ -35,15 +46,18 @@ export async function GET(request: NextRequest) {
   );
 
   if (error) {
-    // A parallel exchange (e.g. browser detectSessionInUrl) may have already
-    // consumed the one-time code. If we already have a session, treat as success.
+    // A parallel exchange may have already succeeded and set cookies on a
+    // discarded response; if this request can already see a user, proceed.
     const { data } = await supabase.auth.getUser();
     if (data.user) {
       return redirect;
     }
 
     const destination = new URL("/login", origin);
-    destination.searchParams.set("error", error.message);
+    const message = /invalid flow state|flow state/i.test(error.message)
+      ? "Google sign-in hit a glitch. Please try Continue with Google once more."
+      : error.message;
+    destination.searchParams.set("error", message);
     return NextResponse.redirect(destination);
   }
 
