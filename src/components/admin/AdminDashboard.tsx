@@ -109,7 +109,7 @@ export default function AdminDashboard({
         </aside>
 
         {/* mobile header */}
-        <div className="flex items-center justify-between px-4 py-3 lg:hidden" style={{ borderBottom: '1px solid var(--color-line)' }}>
+        <div className="ad-mobilebar">
           <Link href="/" className="font-display text-lg font-extrabold tracking-[-0.02em]">
             Verse<span className="dot">.</span>
           </Link>
@@ -127,7 +127,7 @@ export default function AdminDashboard({
         </div>
 
         {/* mobile strip */}
-        <div className="ad-strip lg:hidden" role="tablist" aria-label="Admin sections">
+        <div className="ad-strip" role="tablist" aria-label="Admin sections">
           {SECTIONS.map((section) => (
             <button
               key={section.id}
@@ -143,7 +143,7 @@ export default function AdminDashboard({
           ))}
         </div>
 
-        <main className="min-w-0 px-5 py-7 sm:px-8 sm:py-10">
+        <main className="ad-main px-5 py-7 sm:px-8 sm:py-10">
           <div className="mx-auto max-w-6xl">
             {active === 'analytics' ? <AnalyticsSection /> : null}
             {active === 'scraper' ? <ScraperSection /> : null}

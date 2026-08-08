@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { CREATOR_MAILTO, PLANS, PRO_ACCESS_DAYS, type Plan } from '@/lib/plans';
+import { PLANS, PRO_ACCESS_DAYS, type Plan } from '@/lib/plans';
 import { startCheckout, useSubscription } from '@/lib/useSubscription';
 
 function Tick({ dark }: { dark?: boolean }) {
@@ -46,9 +46,9 @@ function PlanAction({
 
   if (plan.id === 'creator') {
     return (
-      <a href={CREATOR_MAILTO} className="btn btn-ghost mt-7 w-full">
+      <Link href="/creator" className="btn btn-ghost mt-7 w-full">
         Apply to become a Creator
-      </a>
+      </Link>
     );
   }
 

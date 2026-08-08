@@ -35,13 +35,24 @@ export const DEEP_COURSE_FLAGS: Record<string, { premium: boolean; previewCount:
 const LOADERS: Record<string, () => Promise<{ default: DeepCourse }>> = {
   'applications-that-get-replies': () => import('./applications-that-get-replies'),
   'becoming-an-ops-lead': () => import('./becoming-an-ops-lead'),
+  'bookkeeping-basics': () => import('./bookkeeping-basics'),
   'complete-va-starter': () => import('./complete-va-starter'),
+  'customer-support': () => import('./customer-support'),
+  'data-and-research': () => import('./data-and-research'),
   'ecommerce-va': () => import('./ecommerce-va'),
+  'email-marketing': () => import('./email-marketing'),
   'executive-assistant': () => import('./executive-assistant'),
+  'general-va': () => import('./general-va'),
+  'graphic-design': () => import('./graphic-design'),
   'pricing-and-negotiation': () => import('./pricing-and-negotiation'),
+  'project-management': () => import('./project-management'),
   'real-estate-va': () => import('./real-estate-va'),
+  'sales-development': () => import('./sales-development'),
   'seo-specialist': () => import('./seo-specialist'),
   'social-media-manager': () => import('./social-media-manager'),
+  'video-editing': () => import('./video-editing'),
+  'web-and-no-code': () => import('./web-and-no-code'),
+  'writing-for-clients': () => import('./writing-for-clients'),
 };
 
 export const DEEP_COURSE_SLUGS = Object.keys(LOADERS);

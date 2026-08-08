@@ -8,6 +8,7 @@ import FollowUpBell from "./FollowUpBell";
 import { AccountMenu, AccountSheetBlock } from "./AccountMenu";
 import PreferencesSync from "./PreferencesSync";
 import { useAuth } from "@/lib/AuthContext";
+import { isClientAdminEmail } from "@/lib/admin/client-allowlist";
 
 type NavLink = {
   href: string;
@@ -55,9 +56,9 @@ export default function Nav() {
   // header never shows a private link to someone who turns out to be a visitor.
   // Only show signed-in nav once auth is ready
   const signedIn = ready && status === "in" && Boolean(user);
-  const isAdmin = signedIn && user?.email?.toLowerCase() === "kpearl099@gmail.com";
+  const isAdmin = signedIn && isClientAdminEmail(user?.email);
   const links = signedIn ? [DASHBOARD, ...LINKS] : LINKS;
-  const sheetLinks = signedIn 
+  const sheetLinks = signedIn
     ? [...SHEET_LINKS, ...(isAdmin ? [{ href: "/admin", label: "Admin" }] : [])]
     : [...LINKS, { href: "/help", label: "Help" }];
   const home = signedIn ? DASHBOARD.href : "/";

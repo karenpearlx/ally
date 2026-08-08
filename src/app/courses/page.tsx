@@ -4,7 +4,6 @@ import Footer from "@/components/Footer";
 import Reveal from "@/components/Reveal";
 import GradientBg from "@/components/GradientBg";
 import { TOTAL_QUESTIONS } from "@/lib/interview";
-import { CREATOR_MAILTO } from "@/lib/plans";
 import { createClient } from "@/lib/supabase/server";
 import { hasPaidAccess, readSubscription } from "@/lib/subscription";
 import DeepCourseIndex from "@/components/deep/DeepCourseIndex";
@@ -93,9 +92,9 @@ export default async function Courses() {
               We&rsquo;re looking for Filipino VAs to teach what they know. You keep the rights and 90% of the
               sales, we handle the hosting.
             </p>
-            <a href={CREATOR_MAILTO} className="btn btn-primary mt-8">
+            <Link href="/creator" className="btn btn-primary mt-8">
               Apply to become a Creator
-            </a>
+            </Link>
           </div>
         </div>
       </section>

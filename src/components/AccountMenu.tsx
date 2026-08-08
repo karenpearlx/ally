@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { avatarUrl, displayName, initials } from "@/lib/AuthContext";
+import { isClientAdminEmail } from "@/lib/admin/client-allowlist";
 
 /* ---------- shared bits ---------- */
 
@@ -110,6 +111,20 @@ function ExitIcon() {
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
       <path d="M6.2 13.5H3.4a.9.9 0 0 1-.9-.9V3.4a.9.9 0 0 1 .9-.9h2.8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       <path d="M10.4 10.7 13.1 8l-2.7-2.7M12.8 8H6.3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function AdminIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+      <path
+        d="M3.2 7.2 8 3.4l4.8 3.8V13a.9.9 0 0 1-.9.9H4.1a.9.9 0 0 1-.9-.9V7.2Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <path d="M6.4 13.9v-3.6h3.2v3.6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -241,6 +256,20 @@ export function AccountMenu({ user }: { user: User }) {
           <SparkIcon />
           Plans &amp; pricing
         </Link>
+
+        {isClientAdminEmail(user.email) ? (
+          <Link
+            href="/admin"
+            role="menuitem"
+            tabIndex={open ? 0 : -1}
+            onClick={close}
+            className="flex w-full items-center gap-2 rounded-2xl px-2.5 py-2.5 text-left text-[0.875rem] font-medium transition-colors hover:bg-[var(--color-paper-2)]"
+            style={{ color: "var(--color-ink-2)" }}
+          >
+            <AdminIcon />
+            Admin
+          </Link>
+        ) : null}
 
         <button
           type="button"
