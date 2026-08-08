@@ -2,16 +2,34 @@
 // does not pull every multi-hundred-KB module into the first JS chunk.
 import type { DeepCourse } from '../deep-course-types';
 
+/** Free tracks anyone can open fully. Everything else is Pro. */
+const FREE_DEEP_SLUGS = new Set([
+  'complete-va-starter',
+  'applications-that-get-replies',
+  'pricing-and-negotiation',
+]);
+
 export const DEEP_COURSE_FLAGS: Record<string, { premium: boolean; previewCount: number }> = {
-  'applications-that-get-replies': { premium: true, previewCount: 3 },
+  'applications-that-get-replies': { premium: false, previewCount: 3 },
   'becoming-an-ops-lead': { premium: true, previewCount: 3 },
+  'bookkeeping-basics': { premium: true, previewCount: 3 },
   'complete-va-starter': { premium: false, previewCount: 3 },
-  'ecommerce-va': { premium: false, previewCount: 3 },
-  'executive-assistant': { premium: false, previewCount: 3 },
-  'pricing-and-negotiation': { premium: true, previewCount: 3 },
-  'real-estate-va': { premium: false, previewCount: 3 },
-  'seo-specialist': { premium: false, previewCount: 3 },
-  'social-media-manager': { premium: false, previewCount: 3 },
+  'customer-support': { premium: true, previewCount: 3 },
+  'data-and-research': { premium: true, previewCount: 3 },
+  'ecommerce-va': { premium: true, previewCount: 3 },
+  'email-marketing': { premium: true, previewCount: 3 },
+  'executive-assistant': { premium: true, previewCount: 3 },
+  'general-va': { premium: true, previewCount: 3 },
+  'graphic-design': { premium: true, previewCount: 3 },
+  'pricing-and-negotiation': { premium: false, previewCount: 3 },
+  'project-management': { premium: true, previewCount: 3 },
+  'real-estate-va': { premium: true, previewCount: 3 },
+  'sales-development': { premium: true, previewCount: 3 },
+  'seo-specialist': { premium: true, previewCount: 3 },
+  'social-media-manager': { premium: true, previewCount: 3 },
+  'video-editing': { premium: true, previewCount: 3 },
+  'web-and-no-code': { premium: true, previewCount: 3 },
+  'writing-for-clients': { premium: true, previewCount: 3 },
 };
 
 const LOADERS: Record<string, () => Promise<{ default: DeepCourse }>> = {
@@ -29,7 +47,10 @@ const LOADERS: Record<string, () => Promise<{ default: DeepCourse }>> = {
 export const DEEP_COURSE_SLUGS = Object.keys(LOADERS);
 
 export function deepCourseFlags(slug: string) {
-  return DEEP_COURSE_FLAGS[slug];
+  return DEEP_COURSE_FLAGS[slug] ?? {
+    premium: !FREE_DEEP_SLUGS.has(slug),
+    previewCount: 3,
+  };
 }
 
 export function premiumDeepCourseCount() {
